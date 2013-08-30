@@ -6,6 +6,6 @@ C#程式設計     [epub]         [ipad.pdf]    [A4.pdf]   [book.html]  [code.zi
 [ipad.pdf]: ../book/ipad.pdf
 [A4.pdf]: ../book/A4.pdf
 [code.zip]: ../code.zip
-[pmag.html]: ../book/book.html
+[book.html]: ../book/book.html
 [all.zip]: https://github.com/ccckmit/csharpbook/archive/gh-pages.zip
 
