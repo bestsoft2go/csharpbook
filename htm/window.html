@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-視窗程式簡介">C# 視窗程式：簡介</a><ul>
+<li><a href="#視窗與-c-程式">視窗與 C# 程式</a></li>
+<li><a href="#按鈕測試">按鈕測試</a></li>
+<li><a href="#文字型計算機">文字型計算機</a></li>
+<li><a href="#小字典">小字典</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-視窗程式簡介"><a href="#c-視窗程式簡介">C# 視窗程式：簡介</a></h1>
+<h2 id="視窗與-c-程式"><a href="#視窗與-c-程式">視窗與 C# 程式</a></h2>
+<p>本書所採用的視窗技術，是較舊型的 Windows Forms 技術，而非新型的 WPF 技術，雖然這種技術較為傳統，但是卻比較容易學習，對初學者而言是比較好上手的。</p>
+<p>要學習 C# 的視窗程式設計，只看程式碼往往是不夠的，因為程式碼沒有辦法傳達有關視覺化介面設計過程的實況訊息。因此、最好搭配教學影片同時學習。筆者在金門大學上課的時候，幾乎都有用 CamStudio 將上課過程進行螢幕錄影，讀者可以一邊觀看這些上課錄影，一邊參考本書的程式碼進行學習，以下是這些錄影在 YouTube 上的網址。</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">主題</th>
+<th align="left">教學影片</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">C# 視窗程式設計簡介 1</td>
+<td align="left"><a href="http://youtu.be/MtCx-T71_bg">http://youtu.be/MtCx-T71_bg</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 視窗程式設計簡介 2</td>
+<td align="left"><a href="http://youtu.be/_9rEEWE3lXQ">http://youtu.be/_9rEEWE3lXQ</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# 視窗控制項巡禮</td>
+<td align="left"><a href="http://youtu.be/e5366D_ngAA">http://youtu.be/e5366D_ngAA</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 文字型計算機</td>
+<td align="left"><a href="http://youtu.be/A1KVnrfVF7k">http://youtu.be/A1KVnrfVF7k</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# 實作字典查詢程式</td>
+<td align="left"><a href="http://youtu.be/yS3G-H_hrFU">http://youtu.be/yS3G-H_hrFU</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# Array 與 List 物件的使用</td>
+<td align="left"><a href="http://youtu.be/EHSGtKpRprI">http://youtu.be/EHSGtKpRprI</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# HashTable 與 Dictionary 物件的使用</td>
+<td align="left"><a href="http://youtu.be/hYH-npRmmKM">http://youtu.be/hYH-npRmmKM</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 將小字典擴充為小翻譯系統</td>
+<td align="left"><a href="http://youtu.be/_sFsTo41PXs">http://youtu.be/_sFsTo41PXs</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# Timer 與碼錶</td>
+<td align="left"><a href="http://youtu.be/UA0rizekLow">http://youtu.be/UA0rizekLow</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# Timer 與小時鐘</td>
+<td align="left"><a href="http://youtu.be/NJ6B5-vO_88">http://youtu.be/NJ6B5-vO_88</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# Timer 與移動球</td>
+<td align="left"><a href="http://youtu.be/6Gs4MPzt6q4">http://youtu.be/6Gs4MPzt6q4</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 檔案處理</td>
+<td align="left"><a href="http://youtu.be/3EyPcAddd70">http://youtu.be/3EyPcAddd70</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# 文字編輯器 1</td>
+<td align="left"><a href="http://youtu.be/xymT54El53E">http://youtu.be/xymT54El53E</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 文字編輯器 2</td>
+<td align="left"><a href="http://youtu.be/xz5sKvZjLZI">http://youtu.be/xz5sKvZjLZI</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# 畫圖功能示範</td>
+<td align="left"><a href="http://youtu.be/8aAql8R4WSg">http://youtu.be/8aAql8R4WSg</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 小畫板 (2)</td>
+<td align="left"><a href="http://youtu.be/HkOkWRQ_Ad4">http://youtu.be/HkOkWRQ_Ad4</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# 小畫板 (3)</td>
+<td align="left"><a href="http://youtu.be/VXaQu_yYu08">http://youtu.be/VXaQu_yYu08</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 瀏覽器控制 1/3</td>
+<td align="left"><a href="http://youtu.be/CIwYabPN7qA">http://youtu.be/CIwYabPN7qA</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# 瀏覽器控制 2/3</td>
+<td align="left"><a href="http://youtu.be/sJ6cfuL3-ZA">http://youtu.be/sJ6cfuL3-ZA</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 瀏覽器控制 3/3</td>
+<td align="left"><a href="http://youtu.be/YThlDxk-E7U">http://youtu.be/YThlDxk-E7U</a></td>
+</tr>
+<tr class="odd">
+<td align="left">C# DataGridView 元件的使用</td>
+<td align="left"><a href="http://youtu.be/XzsZRqLAi30">http://youtu.be/XzsZRqLAi30</a></td>
+</tr>
+<tr class="even">
+<td align="left">C# 製作賣紅茶的 POS 系統</td>
+<td align="left"><a href="http://youtu.be/XX0wHhvkkiE">http://youtu.be/XX0wHhvkkiE</a></td>
+</tr>
+</tbody>
+</table>
+<p>讀者可以先看「C# 視窗程式設計簡介1, 2 與 C# 視窗控制項巡禮」等三部影片，並且操作一次，有了基本概念之後，就可以繼續下看下列的內容了。</p>
+<h2 id="按鈕測試"><a href="#按鈕測試">按鈕測試</a></h2>
+<p>專案下載：<a href="https://dl.dropbox.com/u/101584453/cs/code/ButtonTest.zip">https://dl.dropbox.com/u/101584453/cs/code/ButtonTest.zip</a></p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">ComponentModel</span>;
+<span class="kw">using</span> System.<span class="fu">Data</span>;
+<span class="kw">using</span> System.<span class="fu">Drawing</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> ButtonTest
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> Form1 : Form
+    {
+        <span class="kw">public</span> <span class="fu">Form1</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">button1_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            label1.<span class="fu">Text</span> = <span class="st">&quot;你好！&quot;</span>;
+            textBox1.<span class="fu">Text</span> = <span class="st">&quot;我很好！&quot;</span>;
+        }
+    }
+}</code></pre>
+<h2 id="文字型計算機"><a href="#文字型計算機">文字型計算機</a></h2>
+<p>教學錄影：C# 文字型計算機 -- <a href="http://youtu.be/A1KVnrfVF7k">http://youtu.be/A1KVnrfVF7k</a> 專案下載：<a href="https://dl.dropbox.com/u/101584453/cs/code/TextCalculator.zip">https://dl.dropbox.com/u/101584453/cs/code/TextCalculator.zip</a></p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">ComponentModel</span>;
+<span class="kw">using</span> System.<span class="fu">Data</span>;
+<span class="kw">using</span> System.<span class="fu">Drawing</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> TextCalculator
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> Form1 : Form
+    {
+        <span class="kw">public</span> <span class="fu">Form1</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">buttonEqual_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="dt">double</span> number1 = Double.<span class="fu">Parse</span>(textBoxNumber1.<span class="fu">Text</span>);
+                <span class="dt">double</span> number2 = Double.<span class="fu">Parse</span>(textBoxNumber2.<span class="fu">Text</span>);
+                <span class="dt">string</span> op = comboBoxOp.<span class="fu">Text</span>;
+                <span class="dt">double</span> result = <span class="fl">0.0</span>;
+                <span class="co">// MessageBox.Show(number1 + op + number2 + &quot;=&quot;);</span>
+                <span class="kw">switch</span> (op)
+                {
+                    <span class="kw">case</span> <span class="st">&quot;+&quot;</span>: result = number1 + number2; <span class="kw">break</span>;
+                    <span class="kw">case</span> <span class="st">&quot;-&quot;</span>: result = number1 - number2; <span class="kw">break</span>;
+                    <span class="kw">case</span> <span class="st">&quot;*&quot;</span>: result = number1 * number2; <span class="kw">break</span>;
+                    <span class="kw">case</span> <span class="st">&quot;/&quot;</span>: result = number1 / number2; <span class="kw">break</span>;
+                    <span class="kw">default</span>: <span class="kw">throw</span> <span class="kw">new</span> <span class="fu">Exception</span>(<span class="st">&quot;op=&quot;</span> + op + <span class="st">&quot;:Error!&quot;</span>);
+                }
+                textBoxResult.<span class="fu">Text</span> = result.<span class="fu">ToString</span>();
+            }
+            <span class="kw">catch</span> (Exception exception)
+            {
+                MessageBox.<span class="fu">Show</span>(exception.<span class="fu">ToString</span>());
+            }
+        }
+    }
+}</code></pre>
+<h2 id="小字典"><a href="#小字典">小字典</a></h2>
+<p>教學錄影：</p>
+<ul>
+<li>C# 實作字典查詢程式 -- <a href="http://youtu.be/yS3G-H_hrFU">http://youtu.be/yS3G-H_hrFU</a></li>
+<li>C# Array 與 List 物件的使用 -- <a href="http://youtu.be/EHSGtKpRprI">http://youtu.be/EHSGtKpRprI</a></li>
+<li>C# HashTable 與 Dictionary 物件的使用 -- <a href="http://youtu.be/hYH-npRmmKM">http://youtu.be/hYH-npRmmKM</a></li>
+<li>C# 將小字典擴充為小翻譯系統 -- <a href="http://youtu.be/_sFsTo41PXs">http://youtu.be/_sFsTo41PXs</a></li>
+</ul>
+<p>專案下載： <a href="https://dl.dropbox.com/u/101584453/cs/code/WinDictionary.zip">https://dl.dropbox.com/u/101584453/cs/code/WinDictionary.zip</a></p>
+<p>執行畫面：</p>
+<div class="figure">
+<img src="../img/DictionaryRun.png" alt="小字典執行畫面" /><p class="caption">小字典執行畫面</p>
+</div>
+<p>介面設計</p>
+<div class="figure">
+<img src="../img/DictionaryDesign.png" alt="小字典介面設計" /><p class="caption">小字典介面設計</p>
+</div>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">ComponentModel</span>;
+<span class="kw">using</span> System.<span class="fu">Data</span>;
+<span class="kw">using</span> System.<span class="fu">Drawing</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> WindowsFormsApplication1
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> FormDictionary : Form
+    {
+        Dictionary&lt;String, String&gt; dict = <span class="kw">new</span> Dictionary&lt;<span class="dt">string</span>, <span class="dt">string</span>&gt;();
+
+        <span class="kw">public</span> <span class="fu">FormDictionary</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">buttonQuery_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            <span class="kw">try</span>
+            {
+                String eword = comboBoxQuery.<span class="fu">Text</span>;
+                String cword = dict[eword];
+                richTextBox.<span class="fu">Text</span> = cword;
+            }
+            <span class="kw">catch</span>
+            {
+                MessageBox.<span class="fu">Show</span>(<span class="st">&quot;輸入錯誤，查不到！&quot;</span>);
+            }
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">FormDictionary_Load</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            String[] eWords = <span class="kw">new</span> String[] { <span class="st">&quot;dog&quot;</span>, <span class="st">&quot;cat&quot;</span>, <span class="st">&quot;eat&quot;</span>, <span class="st">&quot;chase&quot;</span>, <span class="st">&quot;run&quot;</span>, <span class="st">&quot;a&quot;</span>,    <span class="st">&quot;the&quot;</span> };
+            String[] cWords = <span class="kw">new</span> String[] { <span class="st">&quot;狗&quot;</span>,  <span class="st">&quot;貓&quot;</span>,  <span class="st">&quot;吃&quot;</span>,  <span class="st">&quot;追&quot;</span>,     <span class="st">&quot;跑&quot;</span>,  <span class="st">&quot;一隻&quot;</span>, <span class="st">&quot;這隻&quot;</span> };
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; eWords.<span class="fu">Length</span>; i++)
+            {
+                dict.<span class="fu">Add</span>(eWords[i], cWords[i]);
+            }
+        }
+    }
+}</code></pre>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

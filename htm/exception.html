@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-程式基礎例外處理">C# 程式基礎：例外處理</a><ul>
+<li><a href="#範例引發例外">範例：引發例外</a></li>
+<li><a href="#範例捕捉例外">範例：捕捉例外</a></li>
+<li><a href="#視窗版的例外處理">視窗版的例外處理</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-程式基礎例外處理"><a href="#c-程式基礎例外處理">C# 程式基礎：例外處理</a></h1>
+<p>C# 支援例外處理機制，當有任何的例外錯誤發生時，程式會立刻中斷，然後跳出到外層。此時，如果有任何例外處理的程式 (try ... catch) 位於外層，就會接到這個例外，並可以即時處理之。否則，該例外會一直被往外丟，假如都沒有被處理，則程式將被迫中斷，系統會自行輸出例外訊息。</p>
+<h2 id="範例引發例外"><a href="#範例引發例外">範例：引發例外</a></h2>
+<p>以下是一個會引發例外的程式，由於 a/b = 3/0 會導致嘗試以零除 (System.DivideByZeroException) 的例外，但這個例外又沒有被任何的 try ... catch 段落所處理，因此整個程式會中斷並輸出錯誤訊息。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Try1
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        <span class="dt">int</span> a = <span class="dv">3</span>, b = <span class="dv">0</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;a/b=&quot;</span> + a/b);
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>D:\myweb\teach\CSharpProgramming&gt;csc Try1.cs
+Microsoft (R) Visual C# 2008 Compiler version 3.5.30729.1
+for Microsoft (R) .NET Framework version 3.5
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+
+D:\myweb\teach\CSharpProgramming&gt;Try1
+
+未處理的例外狀況: System.DivideByZeroException: 嘗試以零除。
+   於 Try1.Main(String[] args)</code></pre>
+<h2 id="範例捕捉例外"><a href="#範例捕捉例外">範例：捕捉例外</a></h2>
+<p>要處理例外可以用 try...catch 語句，以下範例就利用 try { ... } catch (DivideByZeroException ex) 捕捉了上述的除以零之例外，您可以在 catch 段落中進行例外處理後，再決定要如何繼續執行程式。(本範例中只單純的提示被除數不可為零)。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Try2
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        <span class="kw">try</span>
+        {
+         <span class="dt">int</span> a = <span class="dv">3</span>, b = <span class="dv">0</span>;
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;a/b=&quot;</span> + a / b);
+        }
+        <span class="kw">catch</span> (DivideByZeroException ex)
+        {
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;被除數不可為 0 !</span><span class="ch">\n</span><span class="st">&quot;</span>+ex);
+        }
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>D:\myweb\teach\CSharpProgramming&gt;csc Try2.cs
+Microsoft (R) Visual C# 2008 Compiler version 3.5.30729.1
+for Microsoft (R) .NET Framework version 3.5
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+
+D:\myweb\teach\CSharpProgramming&gt;Try2
+被除數不可為 0 !
+System.DivideByZeroException: 嘗試以零除。
+   於 Try2.Main(String[] args)</code></pre>
+<h2 id="視窗版的例外處理"><a href="#視窗版的例外處理">視窗版的例外處理</a></h2>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">ComponentModel</span>;
+<span class="kw">using</span> System.<span class="fu">Data</span>;
+<span class="kw">using</span> System.<span class="fu">Drawing</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> WError
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> Form1 : Form
+    {
+        <span class="kw">public</span> <span class="fu">Form1</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">button1_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            <span class="kw">try</span>
+            {
+                <span class="dt">double</span> x = <span class="dt">double</span>.<span class="fu">Parse</span>(textBox1.<span class="fu">Text</span>);
+                <span class="dt">double</span> y = <span class="dt">double</span>.<span class="fu">Parse</span>(textBox2.<span class="fu">Text</span>);
+                String op = comboBox1.<span class="fu">Text</span>;
+                <span class="dt">double</span> result = <span class="fl">0.0</span>;
+                <span class="kw">switch</span> (op)
+                {
+                    <span class="kw">case</span> <span class="st">&quot;+&quot;</span>: result = x + y; <span class="kw">break</span>;
+                    <span class="kw">case</span> <span class="st">&quot;-&quot;</span>: result = x - y; <span class="kw">break</span>;
+                    <span class="kw">case</span> <span class="st">&quot;*&quot;</span>: result = x * y; <span class="kw">break</span>;
+                    <span class="kw">case</span> <span class="st">&quot;/&quot;</span>: result = x / y; <span class="kw">break</span>;
+                    <span class="kw">default</span>: <span class="kw">throw</span> <span class="kw">new</span> <span class="fu">Exception</span>(<span class="st">&quot;出現錯誤!&quot;</span>);
+                }
+                textBox3.<span class="fu">Text</span> = result.<span class="fu">ToString</span>();
+            }
+            <span class="kw">catch</span>
+            {
+                textBox3.<span class="fu">Text</span> = <span class="st">&quot;錯誤&quot;</span>;
+            }
+        }
+    }
+}</code></pre>
+<p>執行結果：</p>
+<div class="figure">
+<img src="../img/WinErrorRun.png" alt="圖、視窗版的例外處理" /><p class="caption">圖、視窗版的例外處理</p>
+</div>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

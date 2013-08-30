@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-程式進階正規表達式">C# 程式進階：正規表達式</a><ul>
+<li><a href="#程式範例">程式範例</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-程式進階正規表達式"><a href="#c-程式進階正規表達式">C# 程式進階：正規表達式</a></h1>
+<p>正規表達式是現代程式設計的重要工具，在 C# 當中，對正規表達式的支援相當的完整。您可以用正規表達式抽取出文件中的電話、地址、超連結、email 等欄位，因此正規表達式在文字型資料的處理上是相當方便的。</p>
+<h2 id="程式範例"><a href="#程式範例">程式範例</a></h2>
+<p>在以下的範例中，我們利用正規表達式 &quot;[0-9]+號&quot;，抽取出字串當中的號碼，像是 32號，45號等。其中的 matches 函數是正規表達式的主要部分，我們透過 Regex 物件中的 Match(pText) 與 NextMatch() 函數，不斷取得比對的結果 (Match m)，然後再利用Match 結構取出 m.Groups[pGroupId].Value 這個比對的值，其中若 pGroudId 為 0 ，代表所要取得的是比對結果的全部。而 m.Success 可以用來判斷下一個比對是否成功，這可以做為回圈節數的條件。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>.<span class="fu">RegularExpressions</span>;
+
+<span class="kw">public</span> <span class="kw">class</span> Regexp
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+    {
+        String text = <span class="st">&quot;王小明:32號，李小華：45號&quot;</span>;
+        <span class="kw">foreach</span> (String s <span class="kw">in</span> <span class="fu">matches</span>(<span class="st">&quot;[0-9]+號&quot;</span>, text, <span class="dv">0</span>))
+         Console.<span class="fu">WriteLine</span>(s);
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> IEnumerable <span class="fu">matches</span>(String pPattern, String pText, <span class="dt">int</span> pGroupId)
+    {
+        Regex r = <span class="kw">new</span> <span class="fu">Regex</span>(pPattern, RegexOptions.<span class="fu">IgnoreCase</span> | RegexOptions.<span class="fu">Compiled</span>);
+        <span class="kw">for</span> (Match m = r.<span class="fu">Match</span>(pText); m.<span class="fu">Success</span>; m = m.<span class="fu">NextMatch</span>())
+         <span class="kw">yield</span> <span class="kw">return</span> m.<span class="fu">Groups</span>[pGroupId].<span class="fu">Value</span>;
+    }
+}</code></pre>
+<p>上述範例的執行結果如下所示，您可以看到字串 &quot;王小明:32號，李小華：45號&quot; 當中的 32號與 45 號被抽出來了，這正是正規表達式 &quot;[0-9]+號&quot; 所指定的樣式阿。</p>
+<pre><code>D:\myweb\teach\CSharpNetworkProgramming&gt;csc RegexpTest1.cs
+Microsoft (R) Visual C# 2008 Compiler version 3.5.30729.1
+for Microsoft (R) .NET Framework version 3.5
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+
+D:\myweb\teach\CSharpNetworkProgramming&gt;RegexpTest1
+32號
+45號</code></pre>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

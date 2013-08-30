@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-程式基礎函數">C# 程式基礎：函數</a><ul>
+<li><a href="#簡介">簡介</a></li>
+<li><a href="#函數的參數">函數的參數</a></li>
+<li><a href="#練習">練習</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-程式基礎函數"><a href="#c-程式基礎函數">C# 程式基礎：函數</a></h1>
+<h2 id="簡介"><a href="#簡介">簡介</a></h2>
+<p>C# 分為靜態函數與成員函數兩類，靜態函數附屬於類別，呼叫時可以直接指定類別名稱即可。成員函數附屬於物件，呼叫時必須透過物件變數進行呼叫。</p>
+<p>通常函數會接收到一些呼叫端傳入的參數。C# 的參數有數種傳遞方式，包含傳值參數 (call by value)，傳址參數 (call by reference) 等，基本型態的參數，像是 int, double, char, ... 等，預設都使用傳值的方式，而物件形態的參數，像是 StringBuilder，陣列等，預設則是使用傳址的方式。</p>
+<p>以下是一個 C# 的靜態函數範例，其中的 square 就是靜態函數，其功能是將傳入的數值進行平方動作後傳回，這是一個傳值參數的範例。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Func1
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        <span class="dt">int</span> x = <span class="fu">square</span>(<span class="dv">5</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;x=&quot;</span>+x);
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">int</span> <span class="fu">square</span>(<span class="dt">int</span> n) 
+    {
+        <span class="kw">return</span> n*n;
+    }
+}</code></pre>
+<h2 id="函數的參數"><a href="#函數的參數">函數的參數</a></h2>
+<p>陣列也可以用來作為函數的參數，由於陣列的傳遞採用傳址的方式，因此在函數中對陣列的修改將會是永久性的修改，離開函數後並不會恢復成原先的數值。以下範例中的 add 函數用來將兩個二維陣列 (x,y) 相加，然後將結果放入 z 當中，print 函數則是將傳入的陣列 x 印出來。必須注意的是，對於二維陣列而言，要取得陣列的第一維元素個數 (列數)，可用 GetLength(0)，要取得陣列的第二維元素個數 (行數)，必須使用 GetLength(1)。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System; 
+
+<span class="kw">class</span> Func2
+{ 
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        <span class="dt">int</span>[,] a = {{<span class="dv">1</span>,<span class="dv">2</span>}, {<span class="dv">3</span>,<span class="dv">4</span>}};
+        <span class="dt">int</span>[,] b = {{<span class="dv">5</span>,<span class="dv">6</span>}, {<span class="dv">7</span>,<span class="dv">8</span>}};
+        <span class="dt">int</span>[,] c = <span class="kw">new</span> <span class="dt">int</span>[<span class="dv">2</span>,<span class="dv">2</span>];
+        <span class="fu">add</span>(a, b, c);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;=======a=======&quot;</span>);
+        <span class="fu">print</span>(a);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;=======b=======&quot;</span>);
+        <span class="fu">print</span>(b);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;=======c=======&quot;</span>);
+        <span class="fu">print</span>(c);
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">add</span>(<span class="dt">int</span>[,] x, <span class="dt">int</span>[,] y, <span class="dt">int</span>[,] z)
+    {
+        <span class="kw">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;z.<span class="fu">GetLength</span>(<span class="dv">0</span>); i++)
+        <span class="kw">for</span> (<span class="dt">int</span> j=<span class="dv">0</span>; j&lt;z.<span class="fu">GetLength</span>(<span class="dv">1</span>); j++)
+        {
+         z[i,j] = x[i,j] + y[i,j];
+        }
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">print</span>(<span class="dt">int</span>[,] x)
+    {
+        <span class="kw">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;x.<span class="fu">GetLength</span>(<span class="dv">0</span>); i++)
+        {
+        <span class="kw">for</span> (<span class="dt">int</span> j=<span class="dv">0</span>; j&lt;x.<span class="fu">GetLength</span>(<span class="dv">1</span>); j++)
+         Console.<span class="fu">Write</span>(x[i,j]+<span class="st">&quot; &quot;</span>);
+        Console.<span class="fu">WriteLine</span>();
+    }
+    }
+}</code></pre>
+<h2 id="練習"><a href="#練習">練習</a></h2>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">namespace</span> ConsoleApplication1
+{
+    <span class="kw">class</span> Program
+    {
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+        {
+            <span class="fu">sum</span>(<span class="dv">10</span>);
+            <span class="fu">sum</span>(<span class="dv">20</span>);
+            <span class="fu">sum</span>(<span class="dv">30</span>);
+        }
+        
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">sum</span>(<span class="dt">int</span> n) 
+        {
+            <span class="dt">int</span> s = <span class="dv">0</span>;
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">1</span>; i &lt;= n; i++)
+            {
+                s = s + i;
+            }
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;s = &quot;</span> + s);
+        }
+    }
+}</code></pre>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

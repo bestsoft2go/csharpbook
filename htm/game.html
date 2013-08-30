@@ -1,0 +1,845 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-遊戲程式xna-遊戲引擎">C# 遊戲程式：XNA 遊戲引擎</a><ul>
+<li><a href="#xna-遊戲程式架構">XNA 遊戲程式架構</a></li>
+<li><a href="#xna-的-2d-打飛碟遊戲">XNA 的 2D 打飛碟遊戲</a></li>
+<li><a href="#xna-的-3d-遊戲架構">XNA 的 3D 遊戲架構</a></li>
+<li><a href="#xna-的-3d-打飛碟遊戲">XNA 的 3D 打飛碟遊戲</a></li>
+<li><a href="#從-xna-到-unity3d">從 XNA 到 Unity3D</a></li>
+<li><a href="#參考文獻">參考文獻</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-遊戲程式xna-遊戲引擎"><a href="#c-遊戲程式xna-遊戲引擎">C# 遊戲程式：XNA 遊戲引擎</a></h1>
+<h2 id="xna-遊戲程式架構"><a href="#xna-遊戲程式架構">XNA 遊戲程式架構</a></h2>
+<p>XNA 是微軟於 2007 年推出的遊戲設計引擎，以 C# 為主要語言。因此，您可以輕易的用 C# 在 Visual Studio 的 XNA 開發工具中撰寫 2D、3D 電腦遊戲。</p>
+<p>XNA 所撰寫的遊戲可以在 MS. Windows 的電腦中，或者是 XBOX 遊戲機中使用，最近微軟更將 XNA 加入到 Window Phone 7 版中，讓手機也納入到 XNA 所支援的平台中。</p>
+<p>大部分對 XNA 有興趣的人都會將焦點放在 3D 遊戲上，而這也正是 XNA 最強最好用的地方，用 XNA 寫 3D 遊戲其實相當簡單，其難度與 2D 遊戲差不多。</p>
+<p>一個 XNA 的遊戲，是一個繼承 Microsoft.Xna.Framework.Game 這個類別的程式，其架構大致如下。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">public</span> <span class="kw">class</span> MyGame : Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Game</span> 
+{
+        GraphicsDeviceManager graphics; <span class="co">// 繪圖裝置管理器</span>
+        GamePadState previousState; <span class="co">// XBOX 的按鈕狀態</span>
+<span class="kw">#if</span> !XBOX
+        KeyboardState previousKeyboardState;      <span class="co">// 個人電腦的鍵盤狀態。</span>
+<span class="kw">#endif</span>
+        GameObject gameObj = <span class="kw">null</span>;  <span class="co">// 模型物件</span>
+        SoundEffect sound = <span class="kw">null</span>; <span class="co">// 音效物件</span>
+        ...
+
+        <span class="kw">public</span> <span class="fu">GameMain</span>()
+        {
+            graphics = <span class="kw">new</span> <span class="fu">GraphicsDeviceManager</span>(<span class="kw">this</span>);
+            Content.<span class="fu">RootDirectory</span> = <span class="st">&quot;Content&quot;</span>;
+        }
+
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Initialize</span>() <span class="co">// 初始化</span>
+        {
+            camera = <span class="kw">new</span> <span class="fu">Camera</span>(<span class="kw">this</span>);
+            <span class="kw">this</span>.<span class="fu">Components</span>.<span class="fu">Add</span>(camera);
+            <span class="kw">base</span>.<span class="fu">Initialize</span>();
+        }
+
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">LoadContent</span>()
+        {
+            gameObj.<span class="fu">model</span> = Content.<span class="fu">Load</span>&lt;Model&gt;(<span class="st">&quot;MyModel&quot;</span>); <span class="co">// 載入模型</span>
+            gameObj.<span class="fu">scale</span> = <span class="fl">0.</span>1f; <span class="co">// 設定放大倍率</span>
+            gameObj.<span class="fu">position</span> = <span class="kw">new</span> <span class="fu">Vector3</span>(<span class="fl">0.</span>0f, <span class="fl">0.</span>0f, -<span class="fl">10.</span>0f); <span class="co">// 設定起始位置</span>
+            ...
+        }
+
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Update</span>(GameTime gameTime)
+        {
+           <span class="co">// 1. 偵測鍵盤或滑鼠，根據輸入決定主角如何移動。</span>
+            <span class="kw">if</span> (GamePad.<span class="fu">GetState</span>(PlayerIndex.<span class="fu">One</span>).<span class="fu">Buttons</span>.<span class="fu">Back</span> == ButtonState.<span class="fu">Pressed</span>)
+                <span class="kw">this</span>.<span class="fu">Exit</span>();
+
+            KeyboardState keyboardState = Keyboard.<span class="fu">GetState</span>();  <span class="co">//得到目前鍵盤每一個按鍵的狀況</span>
+            <span class="kw">if</span> (keyboardState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Space</span>) &amp;&amp; previousKeyboardState.<span class="fu">IsKeyUp</span>(Keys.<span class="fu">Space</span>))
+            { 
+               <span class="co">// 當空白鍵被按下時，...</span>
+            }
+
+           <span class="co">// 2. 移動物件</span>
+           gameObj.<span class="fu">position</span> += gameObj.<span class="fu">velocity</span>;
+
+           <span class="co">// 3. 播放聲音</span>
+           <span class="kw">if</span> (...)  explodeSound.<span class="fu">Play</span>();
+
+           <span class="co">// 4. 呼叫基礎類別的 Update() 函數。</span>
+            <span class="kw">base</span>.<span class="fu">Update</span>(gameTime);
+        }
+
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Draw</span>(GameTime gameTime)
+        {
+            GraphicsDevice.<span class="fu">Clear</span>(Color.<span class="fu">CornflowerBlue</span>);
+
+            gameObj.<span class="fu">Draw</span>(camera);
+
+            <span class="kw">base</span>.<span class="fu">Draw</span>(gameTime);
+        }
+
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Draw</span>(Model model)
+        {
+            <span class="kw">foreach</span> (ModelMesh mesh <span class="kw">in</span> model.<span class="fu">Meshes</span>)
+            {
+                <span class="kw">foreach</span> (BasicEffect effect <span class="kw">in</span> mesh.<span class="fu">Effects</span>)
+                {
+                    effect.<span class="fu">EnableDefaultLighting</span>();
+                    effect.<span class="fu">PreferPerPixelLighting</span> = <span class="kw">true</span>;
+
+                    effect.<span class="fu">World</span> =
+                        Matrix.<span class="fu">CreateFromYawPitchRoll</span>(
+                        rotation.<span class="fu">Y</span>,
+                        rotation.<span class="fu">X</span>,
+                        rotation.<span class="fu">Z</span>) *
+
+                        Matrix.<span class="fu">CreateScale</span>(scale) *
+
+                        Matrix.<span class="fu">CreateTranslation</span>(position);
+
+                    effect.<span class="fu">Projection</span> = camera.<span class="fu">projection</span>;
+                    effect.<span class="fu">View</span> = camera.<span class="fu">view</span>;
+                }
+                mesh.<span class="fu">Draw</span>();
+            }
+        }
+    }</code></pre>
+<p>在以上的程式架構中，<code>MyGame : Microsoft.Xna.Framework.Game</code> 這行程式宣告 MyGame 繼承 Xna.Framework.Game 這個類別，這是所有 XNA 程式共同的起點。透過這樣的繼承關係，MyGame 就只要實作 XNA 遊戲需要實作的部份，其餘的邏輯就由 Xna.Framework 幫我們處理掉了，於是、我們就只要實作以下的幾個函數，就能讓 XNA 遊戲運作起來了。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs">        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Initialize</span>() <span class="co">// 初始化</span>
+        ...
+
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">LoadContent</span>() <span class="co">// 載入資源</span>
+        ...
+
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Update</span>(GameTime gameTime) <span class="co">// 更新畫面</span>
+        ... 
+
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Draw</span>(GameTime gameTime)　<span class="co">// 繪製畫面</span></code></pre>
+<p>通常，在 XNA 遊戲程式中，我們會在 Initialize()　進行初始化動作 (物件建立、參數設定、....)，然後在 LoadContent() 函數當中載入資源 (像是 2D 的圖檔或 3D 的模型檔等)。然後、整個 XNA 程式就開始運作了，XNA 引擎會不斷的呼叫 Update 動作 (通常每秒六十次)，以變更新遊戲畫面，而我們所要作的工作，就只剩下決定要如何畫圖，以及鍵盤滑鼠被按下時應該作甚麼事就行了。</p>
+<p>如果讀者想進一步理解 XNA 的 2D 或 3D 遊戲，以下是筆者用 C# 所撰寫的幾個 XNA 遊戲程式，請讀者直接參考這些內容學習 XNA 遊戲程式的寫法。</p>
+<h2 id="xna-的-2d-打飛碟遊戲"><a href="#xna-的-2d-打飛碟遊戲">XNA 的 2D 打飛碟遊戲</a></h2>
+<p>專案下載： * 最簡單版本 -- <a href="https://dl.dropbox.com/u/101584453/cs/code/2D_FighterGame.zip">https://dl.dropbox.com/u/101584453/cs/code/2D_FighterGame.zip</a> * 有爆炸效果 -- <a href="https://dl.dropbox.com/u/101584453/cs/code/2D_FighterGameWithExplode.zip">https://dl.dropbox.com/u/101584453/cs/code/2D_FighterGameWithExplode.zip</a> * 有爆炸聲音 -- <a href="https://dl.dropbox.com/u/101584453/cs/code/2D_FighterGameWithSound.zip">https://dl.dropbox.com/u/101584453/cs/code/2D_FighterGameWithSound.zip</a></p>
+<p>本節將介紹如何用微軟的 XNA 遊戲引擎設計一個 2D 的打飛碟遊戲。在該遊戲中，共有 3 隻飛碟會亂飛，玩家的符號是一個砲台，您必須發射砲彈打飛碟，並且一邊閃避飛碟，每打死一台飛碟就會加一分，一但被飛碟撞到後就會死亡，導致遊戲結束，最後看看你能得到多少分，下圖顯示了遊戲的一個擷取畫面。</p>
+<div class="figure">
+<img src="../img/GameScreenCatch.jpg" />
+</div>
+<p>設計方法：XNA 遊戲的主要架構包含載入 (LoadContent)、更新 (Update) 、繪出 (Draw) 等三個動作，以下是本遊戲中的主要程式片斷。</p>
+<h3 id="資料結構"><a href="#資料結構">資料結構</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs">    <span class="kw">public</span> <span class="kw">class</span> Game1 : Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Game</span>
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        Sprite playerSprite;
+        <span class="dt">const</span> <span class="dt">int</span> MAX_MISSILES = <span class="dv">5</span>, MAX_ENEMIES = <span class="dv">3</span>;
+        Sprite[] missileSprites = <span class="kw">new</span> Sprite[MAX_MISSILES];
+        Sprite[] enemySprites = <span class="kw">new</span> Sprite[MAX_ENEMIES];
+        Vector2 screenSize;
+        Texture2D playerTexture, enemyTexture, missileTexture;
+        KeyboardState previousKeyboardState = Keyboard.<span class="fu">GetState</span>();
+        <span class="dt">bool</span> isGameOver = <span class="kw">false</span>;
+        Random random = <span class="kw">new</span> <span class="fu">Random</span>();
+        SpriteFont font;
+        <span class="dt">int</span> score = <span class="dv">0</span>;</code></pre>
+<h3 id="載入資源-圖檔字型"><a href="#載入資源-圖檔字型">載入資源 (圖檔+字型)</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs">        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">LoadContent</span>()
+        {
+            <span class="co">// Create a new SpriteBatch, which can be used to draw textures.</span>
+            spriteBatch = <span class="kw">new</span> <span class="fu">SpriteBatch</span>(GraphicsDevice);
+
+            <span class="co">// TODO: use this.Content to load your game content here</span>
+            screenSize = <span class="kw">new</span> <span class="fu">Vector2</span>(graphics.<span class="fu">GraphicsDevice</span>.<span class="fu">Viewport</span>.<span class="fu">Width</span>, graphics.<span class="fu">GraphicsDevice</span>.<span class="fu">Viewport</span>.<span class="fu">Height</span>);
+            playerTexture = Content.<span class="fu">Load</span>&lt;Texture2D&gt;(<span class="st">&quot;player&quot;</span>);
+            enemyTexture = Content.<span class="fu">Load</span>&lt;Texture2D&gt;(<span class="st">&quot;enemy&quot;</span>);
+            missileTexture = Content.<span class="fu">Load</span>&lt;Texture2D&gt;(<span class="st">&quot;missile&quot;</span>);
+
+            playerSprite = <span class="kw">new</span> <span class="fu">Sprite</span>(playerTexture, <span class="kw">new</span> <span class="fu">Vector2</span>(<span class="dv">300</span>, <span class="dv">400</span>));
+            playerSprite.<span class="fu">size</span>.<span class="fu">Y</span> = <span class="dv">140</span>;
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; MAX_MISSILES; i++)
+            {
+                missileSprites[i] = <span class="kw">new</span> <span class="fu">Sprite</span>(missileTexture, <span class="kw">new</span> <span class="fu">Vector2</span>(<span class="dv">0</span>, <span class="dv">0</span>));
+                missileSprites[i].<span class="fu">isAlive</span> = <span class="kw">false</span>;
+            }
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; MAX_ENEMIES; i++)
+            {
+                enemySprites[i] = <span class="kw">new</span> <span class="fu">Sprite</span>(enemyTexture, <span class="fu">randomEnemyXY</span>());
+                enemySprites[i].<span class="fu">velocity</span> = <span class="kw">new</span> <span class="fu">Vector2</span>(random.<span class="fu">Next</span>(-<span class="dv">3</span>, <span class="dv">3</span>), random.<span class="fu">Next</span>(-<span class="dv">3</span>, <span class="dv">3</span>));
+                enemySprites[i].<span class="fu">isAlive</span> = <span class="kw">false</span>;
+            }
+
+            font = Content.<span class="fu">Load</span>&lt;SpriteFont&gt;(<span class="st">&quot;SpriteFont&quot;</span>);
+            <span class="kw">base</span>.<span class="fu">LoadContent</span>();
+        }
+
+        <span class="kw">public</span> Vector2 <span class="fu">randomEnemyXY</span>() 
+        {
+           <span class="dt">int</span> enemyX = random.<span class="fu">Next</span>(<span class="dv">0</span>, (<span class="dt">int</span>) (screenSize.<span class="fu">X</span><span class="dv">-100</span>) );
+           <span class="dt">int</span> enemyY = random.<span class="fu">Next</span>(<span class="dv">0</span>);
+           <span class="kw">return</span> <span class="kw">new</span> <span class="fu">Vector2</span>(enemyX, enemyY);
+        }</code></pre>
+<h3 id="更新邏輯模型"><a href="#更新邏輯模型">更新邏輯模型</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs">        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Update</span>(GameTime gameTime)
+        {
+            <span class="co">// Allows the game to exit</span>
+            <span class="kw">if</span> (GamePad.<span class="fu">GetState</span>(PlayerIndex.<span class="fu">One</span>).<span class="fu">Buttons</span>.<span class="fu">Back</span> == ButtonState.<span class="fu">Pressed</span>)
+                <span class="kw">this</span>.<span class="fu">Exit</span>();
+
+            <span class="co">// TODO: Add your update logic here</span>
+            <span class="kw">if</span> (isGameOver) <span class="kw">return</span>;
+<span class="kw">#if</span> !XBOX
+            KeyboardState keyboardState = Keyboard.<span class="fu">GetState</span>();
+            <span class="kw">if</span> (keyboardState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Left</span>))  playerSprite.<span class="fu">velocity</span> = <span class="kw">new</span> <span class="fu">Vector2</span>(-<span class="dv">5</span>, <span class="dv">0</span>);
+            <span class="kw">if</span> (keyboardState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Right</span>)) playerSprite.<span class="fu">velocity</span> = <span class="kw">new</span> <span class="fu">Vector2</span>(<span class="dv">5</span>, <span class="dv">0</span>);
+            <span class="kw">if</span> (keyboardState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Up</span>)) playerSprite.<span class="fu">velocity</span> = <span class="kw">new</span> <span class="fu">Vector2</span>(<span class="dv">0</span>, -<span class="dv">5</span>);
+            <span class="kw">if</span> (keyboardState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Down</span>)) playerSprite.<span class="fu">velocity</span> = <span class="kw">new</span> <span class="fu">Vector2</span>(<span class="dv">0</span>, <span class="dv">5</span>);
+            <span class="kw">if</span> (keyboardState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Space</span>) &amp;&amp; previousKeyboardState.<span class="fu">IsKeyUp</span>(Keys.<span class="fu">Space</span>))
+            {
+                <span class="dt">float</span> x = playerSprite.<span class="fu">position</span>.<span class="fu">X</span> + playerTexture.<span class="fu">Width</span>/<span class="dv">2</span> - missileTexture.<span class="fu">Width</span>/<span class="dv">2</span>;
+                <span class="dt">float</span> y = playerSprite.<span class="fu">position</span>.<span class="fu">Y</span>;
+                <span class="fu">fireMissile</span>(x, y);
+            }
+            previousKeyboardState = keyboardState;
+<span class="kw">#endif</span>
+            Rectangle playerRect = <span class="kw">new</span> <span class="fu">Rectangle</span>((<span class="dt">int</span>)playerSprite.<span class="fu">position</span>.<span class="fu">X</span> + <span class="dv">20</span>, (<span class="dt">int</span>)playerSprite.<span class="fu">position</span>.<span class="fu">Y</span> + <span class="dv">20</span>,
+                                                 playerTexture.<span class="fu">Width</span><span class="dv">-40</span>, playerTexture.<span class="fu">Height</span>/<span class="dv">2</span>);
+            <span class="kw">foreach</span> (Sprite enemy <span class="kw">in</span> enemySprites) 
+            {
+                <span class="kw">if</span> (!enemy.<span class="fu">isAlive</span>)
+                {
+                    enemy.<span class="fu">isAlive</span> = <span class="kw">true</span>;
+                    enemy.<span class="fu">position</span> = <span class="fu">randomEnemyXY</span>();
+                }
+
+                enemy.<span class="fu">Move</span>(screenSize);
+                Rectangle enemyRect = <span class="kw">new</span> <span class="fu">Rectangle</span>((<span class="dt">int</span>) enemy.<span class="fu">position</span>.<span class="fu">X</span><span class="dv">+20</span>, (<span class="dt">int</span>) enemy.<span class="fu">position</span>.<span class="fu">Y</span><span class="dv">+20</span>, 
+                                                    enemyTexture.<span class="fu">Width</span><span class="dv">-40</span>, enemyTexture.<span class="fu">Height</span><span class="dv">-40</span>);
+                <span class="kw">if</span> (enemyRect.<span class="fu">Intersects</span>(playerRect))
+                    isGameOver = <span class="kw">true</span>;
+
+                <span class="kw">foreach</span> (Sprite missile <span class="kw">in</span> missileSprites)
+                {
+                    <span class="kw">if</span> (missile.<span class="fu">isInside</span>(screenSize))
+                        missile.<span class="fu">Move</span>(screenSize);
+                    <span class="kw">else</span>
+                        missile.<span class="fu">isAlive</span> = <span class="kw">false</span>;
+
+                    <span class="kw">if</span> (missile.<span class="fu">isAlive</span>)
+                    {
+                        Rectangle missileRect = <span class="kw">new</span> <span class="fu">Rectangle</span>((<span class="dt">int</span>) missile.<span class="fu">position</span>.<span class="fu">X</span>, (<span class="dt">int</span>) missile.<span class="fu">position</span>.<span class="fu">Y</span>, 
+                                                              missileTexture.<span class="fu">Width</span>, missileTexture.<span class="fu">Height</span>);
+                        <span class="kw">if</span> (missileRect.<span class="fu">Intersects</span>(enemyRect))
+                        {
+                            enemy.<span class="fu">isAlive</span> = <span class="kw">false</span>;
+                            score ++;
+                        }
+                    }
+                }
+            }
+            
+            playerSprite.<span class="fu">Move</span>(screenSize);
+
+            <span class="kw">base</span>.<span class="fu">Update</span>(gameTime);
+        }
+
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">fireMissile</span>(<span class="dt">float</span> x, <span class="dt">float</span> y)
+        {
+            <span class="kw">foreach</span> (Sprite missile <span class="kw">in</span> missileSprites)
+            {
+                <span class="kw">if</span> (!missile.<span class="fu">isAlive</span>)
+                {
+                    missile.<span class="fu">isAlive</span> = <span class="kw">true</span>;
+                    missile.<span class="fu">position</span> = <span class="kw">new</span> <span class="fu">Vector2</span>(x, y);
+                    missile.<span class="fu">velocity</span> = <span class="kw">new</span> <span class="fu">Vector2</span>(<span class="dv">0</span>, -<span class="dv">5</span>);
+                    <span class="kw">return</span>;
+                }
+            }
+        }</code></pre>
+<h3 id="繪出---更新畫面"><a href="#繪出---更新畫面">繪出 - 更新畫面</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs">        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Draw</span>(GameTime gameTime)
+        {
+            GraphicsDevice.<span class="fu">Clear</span>(Color.<span class="fu">CornflowerBlue</span>);
+
+            <span class="co">// TODO: Add your drawing code here</span>
+            spriteBatch.<span class="fu">Begin</span>(SpriteBlendMode.<span class="fu">AlphaBlend</span>);
+            playerSprite.<span class="fu">draw</span>(spriteBatch);
+            <span class="kw">foreach</span> (Sprite enemy <span class="kw">in</span> enemySprites)
+                enemy.<span class="fu">draw</span>(spriteBatch);
+            <span class="kw">foreach</span> (Sprite missile <span class="kw">in</span> missileSprites)
+            {
+                <span class="kw">if</span> (missile.<span class="fu">isAlive</span>)
+                    missile.<span class="fu">draw</span>(spriteBatch);
+            }
+            spriteBatch.<span class="fu">DrawString</span>(font, String.<span class="fu">Format</span>(<span class="st">&quot;Score:{0}&quot;</span>, score), <span class="kw">new</span> <span class="fu">Vector2</span>(<span class="dv">10</span>, <span class="dv">10</span>), Color.<span class="fu">Black</span>);
+            <span class="kw">if</span> (isGameOver)
+                spriteBatch.<span class="fu">DrawString</span>(font, <span class="st">&quot;Game Over!&quot;</span>, <span class="kw">new</span> <span class="fu">Vector2</span>(screenSize.<span class="fu">X</span> / <span class="dv">2</span>, screenSize.<span class="fu">Y</span> / <span class="dv">2</span>), Color.<span class="fu">Black</span>);
+            spriteBatch.<span class="fu">End</span>();
+
+            <span class="kw">base</span>.<span class="fu">Draw</span>(gameTime);
+        }
+    }</code></pre>
+<p>透過以上程式，我們示範了如何使用 XNA 設計一個簡單的小遊戲 『打飛碟』。透過這樣的範例，應該可以呈現出 XNA 的 2D 遊戲設計主要架構。</p>
+<h2 id="xna-的-3d-遊戲架構"><a href="#xna-的-3d-遊戲架構">XNA 的 3D 遊戲架構</a></h2>
+<p>在 3D 的世界裏，每個物件都有其 3D 座標，而且最後還是必須要透過某個相機將整個視角畫面呈現在 2D 的螢幕上，因此 XNA 的 3D 遊戲設計牽涉到遊戲物件 (Game Object) 與照相機 (Camera) 等物體。</p>
+<p>通常 XNA 程式裏的每個模型都會有對應的物件，如果把這些物件抽象化，那就會抽象出下列 GameObject 結構，於是我們就只要繼承這個物件，然後為每個物件的 model 填入適當的模型就行了。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs">    <span class="co">// 遊戲模型物件</span>
+    <span class="kw">class</span> GameObject
+    {
+        <span class="kw">public</span> Model model = <span class="kw">null</span>;
+        <span class="kw">public</span> Vector3 position = Vector3.<span class="fu">Zero</span>;
+        <span class="kw">public</span> Vector3 rotation = Vector3.<span class="fu">Zero</span>;
+        <span class="kw">public</span> <span class="dt">float</span> scale = <span class="fl">1.</span>0f;
+        <span class="kw">public</span> Vector3 velocity = Vector3.<span class="fu">Zero</span>;
+        <span class="kw">public</span> <span class="dt">bool</span> alive = <span class="kw">false</span>;
+
+        <span class="kw">public</span> BoundingSphere <span class="fu">boundingSphere</span>()
+        {
+            BoundingSphere sphere = model.<span class="fu">Meshes</span>[<span class="dv">0</span>].<span class="fu">BoundingSphere</span>;
+            sphere.<span class="fu">Center</span> = position;
+            sphere.<span class="fu">Radius</span> *= scale;
+            <span class="kw">return</span> sphere;
+        }
+
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">Draw</span>(Camera camera)
+        {
+            <span class="kw">foreach</span> (ModelMesh mesh <span class="kw">in</span> model.<span class="fu">Meshes</span>)
+            {
+                <span class="kw">foreach</span> (BasicEffect effect <span class="kw">in</span> mesh.<span class="fu">Effects</span>)
+                {
+                    effect.<span class="fu">EnableDefaultLighting</span>();
+                    effect.<span class="fu">PreferPerPixelLighting</span> = <span class="kw">true</span>;
+
+                    effect.<span class="fu">World</span> =
+                        Matrix.<span class="fu">CreateFromYawPitchRoll</span>(
+                        rotation.<span class="fu">Y</span>,
+                        rotation.<span class="fu">X</span>,
+                        rotation.<span class="fu">Z</span>) *
+
+                        Matrix.<span class="fu">CreateScale</span>(scale) *
+
+                        Matrix.<span class="fu">CreateTranslation</span>(position);
+
+                    effect.<span class="fu">Projection</span> = camera.<span class="fu">projection</span>;
+                    effect.<span class="fu">View</span> = camera.<span class="fu">view</span>;
+                }
+                mesh.<span class="fu">Draw</span>();
+            }
+        }
+    }</code></pre>
+<p>在遊戲當中，除了模型物件之外，還有一個很特殊的物件，那就是像機，這個物件的邏輯較為獨特，幾乎有固定的寫法，以下是一個基本的像機物件之寫法。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs">    <span class="co">// 相機物件</span>
+    <span class="kw">class</span> Camera : Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">GameComponent</span>
+    {
+        <span class="kw">public</span> Matrix view;         <span class="co">//  視覺矩陣</span>
+        <span class="kw">public</span> Matrix projection =        <span class="co">//  投影矩陣</span>
+                 Matrix.<span class="fu">CreatePerspectiveFieldOfView</span>(    
+                                  MathHelper.<span class="fu">PiOver4</span>,  <span class="co">// 視角 45度</span>
+                                  <span class="fl">1.</span>333f, <span class="co">// 螢幕 寬高比</span>
+                                  <span class="dv">1</span>,      <span class="co">// 最近的Z軸截點</span>
+                                  <span class="dv">10000</span>);  <span class="co">// 最遠的Z軸截點 </span>
+
+        <span class="kw">public</span> Vector3 FrontVector = <span class="kw">new</span> <span class="fu">Vector3</span>(<span class="dv">0</span>, <span class="dv">0</span>, -<span class="dv">1</span>); <span class="co">//相機的 往前向量</span>
+        <span class="kw">public</span> Vector3 Position = <span class="kw">new</span> <span class="fu">Vector3</span>(<span class="fl">0.</span>0f, <span class="fl">2.</span>0f, <span class="fl">20.</span>0f); <span class="co">// 相機的位置</span>
+        <span class="kw">public</span> <span class="dt">float</span> Yaw = <span class="fl">0.</span>0f, Pitch = <span class="fl">0.</span>0f, Roll = <span class="fl">0.</span>0f;
+        <span class="kw">public</span> <span class="dt">float</span> YawDelta = <span class="fl">0.</span>2f, PitchDelta = <span class="fl">0.</span>2f, RollDelta = <span class="fl">0.</span>2f;
+        <span class="kw">public</span> <span class="dt">float</span> MoveDelta = <span class="dv">200</span>;   <span class="co">// 前後走 的 增減量</span>
+
+        <span class="kw">public</span> <span class="fu">Camera</span>(Game game)
+            : <span class="kw">base</span>(game)
+        {
+            <span class="co">// TODO: Construct any child components here</span>
+
+        }
+
+        <span class="co">//更新 相機 的位置</span>
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">UpdateCamera</span>(Vector3 Position, <span class="dt">float</span> Yaw, <span class="dt">float</span> Pitch, <span class="dt">float</span> Roll)
+        {
+            <span class="co">//攝影機一開始是 朝向 負 Z 軸 看著(0, 0, -1) 的 </span>
+            Vector3 LookAt = Position + Vector3.<span class="fu">TransformNormal</span>(FrontVector,
+                                            Matrix.<span class="fu">CreateFromYawPitchRoll</span>(Yaw, Pitch, Roll)); 
+
+            <span class="co">// 根據 相機的位置 相機要看到的點 相機上方的向量 得到 視覺矩陣</span>
+            view = Matrix.<span class="fu">CreateLookAt</span>(Position,  <span class="co">// 相機的位置</span>
+                                       LookAt,    <span class="co">// 相機要看到的點</span>
+                                       Vector3.<span class="fu">Up</span>); <span class="co">// 相機上方的向量</span>
+        }
+
+        <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Initialize</span>()
+        {
+            <span class="kw">base</span>.<span class="fu">Initialize</span>();
+        }
+
+        <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Update</span>(GameTime gameTime)
+        {
+            <span class="co">// TODO: Add your update code here</span>
+            <span class="dt">float</span> elapsedTime = (<span class="dt">float</span>) gameTime.<span class="fu">ElapsedGameTime</span>.<span class="fu">TotalSeconds</span>;
+
+            KeyboardState newState;  <span class="co">// 宣告一個KeyboardState 結構的變數</span>
+            newState = Keyboard.<span class="fu">GetState</span>();  <span class="co">//得到目前鍵盤每一個按鍵的狀況</span>
+            <span class="kw">if</span> (newState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Right</span>)) Yaw -= YawDelta * elapsedTime; <span class="co">//右鍵按下</span>
+            <span class="kw">if</span> (newState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Left</span>)) Yaw += YawDelta * elapsedTime;  <span class="co">//左鍵按下</span>
+            <span class="kw">if</span> (newState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Up</span>)) Pitch += PitchDelta * elapsedTime;
+            <span class="kw">if</span> (newState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Down</span>)) Pitch -= PitchDelta * elapsedTime;
+            <span class="fu">UpdateCamera</span>(Position, Yaw, Pitch, Roll);
+
+            <span class="kw">base</span>.<span class="fu">Update</span>(gameTime);
+        }
+    }</code></pre>
+<h2 id="xna-的-3d-打飛碟遊戲"><a href="#xna-的-3d-打飛碟遊戲">XNA 的 3D 打飛碟遊戲</a></h2>
+<ul>
+<li>最簡單版本 -- <a href="https://dl.dropbox.com/u/101584453/cs/code/3D_FighterGameMissileSound.zip">https://dl.dropbox.com/u/101584453/cs/code/3D_FighterGameMissileSound.zip</a></li>
+<li>有碰撞偵測 -- <a href="https://dl.dropbox.com/u/101584453/cs/code/3D_FighterGameWithCollision.zip">https://dl.dropbox.com/u/101584453/cs/code/3D_FighterGameWithCollision.zip</a></li>
+<li>有爆炸效果 -- <a href="https://dl.dropbox.com/u/101584453/cs/code/3D_FighterGameParticle.zip">https://dl.dropbox.com/u/101584453/cs/code/3D_FighterGameParticle.zip</a></li>
+</ul>
+<p>程式碼：</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Audio</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Content</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">GamerServices</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Graphics</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Input</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Media</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Net</span>;
+<span class="kw">using</span> Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Storage</span>;
+<span class="kw">using</span> System.<span class="fu">Diagnostics</span>;
+
+
+<span class="kw">namespace</span> _3D_FighterGame
+{   
+    <span class="kw">static</span> <span class="kw">class</span> Program
+    {
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// The main entry point for the application.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+        {
+            <span class="kw">using</span> (Game1 game = <span class="kw">new</span> <span class="fu">Game1</span>())
+            {
+                game.<span class="fu">Run</span>();
+            }
+        }
+    }    
+    
+    <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+    <span class="co">/// This is the main type for your game</span>
+    <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+    <span class="kw">public</span> <span class="kw">class</span> Game1 : Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">Game</span>
+    {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        GameObject launcherBase = <span class="kw">new</span> <span class="fu">GameObject</span>();
+        GameObject launcherHead = <span class="kw">new</span> <span class="fu">GameObject</span>();
+        Model enemyModel = <span class="kw">null</span>, missileModel = <span class="kw">null</span>;
+        List&lt;GameObject&gt; enemies = <span class="kw">new</span> List&lt;GameObject&gt;();
+        List&lt;GameObject&gt; missiles = <span class="kw">new</span> List&lt;GameObject&gt;();
+        Camera camera = <span class="kw">null</span>;
+        Random random = <span class="kw">new</span> <span class="fu">Random</span>(<span class="dv">7</span>);
+        SoundEffect explodeSound = <span class="kw">null</span>, fireMissileSound = <span class="kw">null</span>;
+
+        GamePadState previousState;
+<span class="kw">#if</span> !XBOX
+        KeyboardState previousKeyboardState;
+<span class="kw">#endif</span>
+
+        <span class="kw">public</span> <span class="fu">Game1</span>()
+        {
+            graphics = <span class="kw">new</span> <span class="fu">GraphicsDeviceManager</span>(<span class="kw">this</span>);
+            Content.<span class="fu">RootDirectory</span> = <span class="st">&quot;Content&quot;</span>;
+        }
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// Allows the game to perform any initialization it needs to before starting to run.</span>
+        <span class="co">/// This is where it can query for any required services and load any non-graphic</span>
+        <span class="co">/// related content.  Calling base.Initialize will enumerate through any components</span>
+        <span class="co">/// and initialize them as well.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Initialize</span>()
+        {
+            <span class="co">// TODO: Add your initialization logic here</span>
+            camera = <span class="kw">new</span> <span class="fu">Camera</span>(<span class="kw">this</span>);
+            <span class="kw">this</span>.<span class="fu">Components</span>.<span class="fu">Add</span>(camera);
+
+            <span class="kw">base</span>.<span class="fu">Initialize</span>();
+        }
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// LoadContent will be called once per game and is the place to load</span>
+        <span class="co">/// all of your content.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">LoadContent</span>()
+        {
+            <span class="co">// Create a new SpriteBatch, which can be used to draw textures.</span>
+            spriteBatch = <span class="kw">new</span> <span class="fu">SpriteBatch</span>(GraphicsDevice);
+
+            <span class="co">// TODO: use this.Content to load your game content here</span>
+            camera = <span class="kw">new</span> <span class="fu">Camera</span>(<span class="kw">this</span>);
+
+            launcherBase.<span class="fu">model</span> = Content.<span class="fu">Load</span>&lt;Model&gt;(<span class="st">&quot;Models</span><span class="ch">\\</span><span class="st">launcher_base&quot;</span>);
+            launcherBase.<span class="fu">scale</span> = <span class="fl">0.</span>1f;
+            launcherBase.<span class="fu">position</span> = <span class="kw">new</span> <span class="fu">Vector3</span>(<span class="fl">0.</span>0f, <span class="fl">0.</span>0f, -<span class="fl">10.</span>0f);
+
+<span class="co">//            launcherHead.model = Content.Load&lt;Model&gt;(&quot;Models\\launcher_head&quot;);</span>
+<span class="co">//            launcherHead.scale = 0.2f;</span>
+<span class="co">//            launcherHead.position = launcherBase.position + new Vector3(0.0f, 20.0f, -120.0f);</span>
+
+            enemyModel = Content.<span class="fu">Load</span>&lt;Model&gt;(<span class="st">&quot;Models</span><span class="ch">\\</span><span class="st">enemy&quot;</span>);
+            missileModel = Content.<span class="fu">Load</span>&lt;Model&gt;(<span class="st">&quot;Models</span><span class="ch">\\</span><span class="st">missile&quot;</span>);
+            explodeSound = Content.<span class="fu">Load</span>&lt;SoundEffect&gt;(<span class="st">&quot;Sound</span><span class="ch">\\</span><span class="st">explosion&quot;</span>);
+            fireMissileSound = Content.<span class="fu">Load</span>&lt;SoundEffect&gt;(<span class="st">&quot;Sound</span><span class="ch">\\</span><span class="st">missilelaunch&quot;</span>);
+        }
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// UnloadContent will be called once per game and is the place to unload</span>
+        <span class="co">/// all content.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">UnloadContent</span>()
+        {
+            <span class="co">// TODO: Unload any non ContentManager content here</span>
+        }
+
+        <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">newEnemy</span>()
+        {
+            GameObject e = <span class="kw">new</span> <span class="fu">GameObject</span>();
+            e.<span class="fu">model</span> = enemyModel;
+            e.<span class="fu">position</span> = <span class="kw">new</span> <span class="fu">Vector3</span>(random.<span class="fu">Next</span>(-<span class="dv">5</span>, <span class="dv">5</span>) * <span class="fl">50.</span>0f, random.<span class="fu">Next</span>(-<span class="dv">5</span>, <span class="dv">5</span>) * <span class="fl">50.</span>0f, -<span class="fl">2000.</span>0f);
+            e.<span class="fu">velocity</span> = <span class="kw">new</span> <span class="fu">Vector3</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">2.</span>0f);
+            e.<span class="fu">scale</span> = <span class="fl">0.</span>03f;
+            enemies.<span class="fu">Add</span>(e);
+        }
+
+        <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">newMissile</span>()
+        {
+            Matrix rotationMatrix = Matrix.<span class="fu">CreateFromYawPitchRoll</span>(camera.<span class="fu">Yaw</span>, camera.<span class="fu">Pitch</span>, camera.<span class="fu">Roll</span>);
+            
+            GameObject m = <span class="kw">new</span> <span class="fu">GameObject</span>();
+            m.<span class="fu">model</span> = missileModel;
+            m.<span class="fu">position</span> = launcherBase.<span class="fu">position</span> + Vector3.<span class="fu">Transform</span>(Vector3.<span class="fu">Forward</span> * <span class="dv">10</span>, rotationMatrix);
+            m.<span class="fu">scale</span> = <span class="fl">10.</span>0f;
+            <span class="co">// m.velocity = new Vector3(0, 0, -10.0f);</span>
+            m.<span class="fu">velocity</span> = Vector3.<span class="fu">Transform</span>(Vector3.<span class="fu">Forward</span> * <span class="dv">10</span>, rotationMatrix);
+            missiles.<span class="fu">Add</span>(m);
+            fireMissileSound.<span class="fu">Play</span>();
+        }
+
+        <span class="kw">protected</span> <span class="dt">void</span> <span class="fu">getLuncherBasePosition</span>()
+        {
+            Matrix rotationMatrix = Matrix.<span class="fu">CreateFromYawPitchRoll</span>(camera.<span class="fu">Yaw</span>, camera.<span class="fu">Pitch</span>, camera.<span class="fu">Roll</span>);
+            launcherBase.<span class="fu">position</span> = camera.<span class="fu">Position</span> + Vector3.<span class="fu">Transform</span>(Vector3.<span class="fu">Forward</span> * <span class="dv">50</span>, rotationMatrix); <span class="co">//  + Vector3.Down * 10</span>
+            launcherBase.<span class="fu">rotation</span>.<span class="fu">Y</span> = camera.<span class="fu">Yaw</span>;
+            launcherBase.<span class="fu">rotation</span>.<span class="fu">X</span> = camera.<span class="fu">Pitch</span>;
+            launcherBase.<span class="fu">rotation</span>.<span class="fu">Z</span> = camera.<span class="fu">Roll</span>;
+<span class="co">//            Trace.WriteLine(launcherBase.position);</span>
+        }
+
+        <span class="dt">double</span> lastEnemyDelay = <span class="fl">0.</span>0f;
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// Allows the game to run logic such as updating the world,</span>
+        <span class="co">/// checking for collisions, gathering input, and playing audio.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">&quot;gameTime&quot;</span><span class="kw">&gt;</span><span class="co">Provides a snapshot of timing values.</span><span class="kw">&lt;/param&gt;</span>
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Update</span>(GameTime gameTime)
+        {
+            <span class="co">// Allows the game to exit</span>
+            <span class="kw">if</span> (GamePad.<span class="fu">GetState</span>(PlayerIndex.<span class="fu">One</span>).<span class="fu">Buttons</span>.<span class="fu">Back</span> == ButtonState.<span class="fu">Pressed</span>)
+                <span class="kw">this</span>.<span class="fu">Exit</span>();
+
+            <span class="fu">getLuncherBasePosition</span>();
+
+            KeyboardState keyboardState = Keyboard.<span class="fu">GetState</span>();  <span class="co">//得到目前鍵盤每一個按鍵的狀況</span>
+            <span class="kw">if</span> (keyboardState.<span class="fu">IsKeyDown</span>(Keys.<span class="fu">Space</span>) &amp;&amp; previousKeyboardState.<span class="fu">IsKeyUp</span>(Keys.<span class="fu">Space</span>))
+            {
+                <span class="fu">newMissile</span>();
+            }
+
+            <span class="dt">double</span> elapsedTime = gameTime.<span class="fu">ElapsedGameTime</span>.<span class="fu">TotalSeconds</span>;
+            lastEnemyDelay += elapsedTime;
+            <span class="kw">if</span> (lastEnemyDelay &gt;= <span class="dv">1</span>)
+            {
+                <span class="kw">if</span> (enemies.<span class="fu">Count</span> &lt; <span class="dv">10</span>)
+                {
+                    <span class="fu">newEnemy</span>();
+                    lastEnemyDelay = <span class="fl">0.</span>0f;
+                }
+            }
+
+            GameObject[] eList = enemies.<span class="fu">ToArray</span>();
+            <span class="kw">foreach</span> (GameObject e <span class="kw">in</span> eList) 
+            {
+                <span class="kw">if</span> (e.<span class="fu">position</span>.<span class="fu">Z</span> &gt;= <span class="dv">0</span>)
+                    enemies.<span class="fu">Remove</span>(e);
+                <span class="kw">else</span>
+                    e.<span class="fu">position</span> += e.<span class="fu">velocity</span>;
+            }
+
+            GameObject[] mList = missiles.<span class="fu">ToArray</span>();
+            <span class="kw">foreach</span> (GameObject m <span class="kw">in</span> mList)
+            {
+                <span class="kw">if</span> (m.<span class="fu">position</span>.<span class="fu">Z</span> &lt;= -<span class="dv">3000</span>)
+                    missiles.<span class="fu">Remove</span>(m);
+                <span class="kw">else</span>
+                    m.<span class="fu">position</span> += m.<span class="fu">velocity</span>;
+            }
+
+            <span class="co">// TODO: Add your update logic here</span>
+            camera.<span class="fu">Update</span>(gameTime);
+
+            previousKeyboardState = keyboardState;
+
+            <span class="kw">base</span>.<span class="fu">Update</span>(gameTime);
+        }
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// This is called when the game should draw itself.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">&quot;gameTime&quot;</span><span class="kw">&gt;</span><span class="co">Provides a snapshot of timing values.</span><span class="kw">&lt;/param&gt;</span>
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Draw</span>(GameTime gameTime)
+        {
+            GraphicsDevice.<span class="fu">Clear</span>(Color.<span class="fu">CornflowerBlue</span>);
+            <span class="co">// TODO: Add your drawing code here</span>
+            <span class="fu">DrawGameObject</span>(launcherBase);
+<span class="co">//          DrawGameObject(launcherHead);</span>
+            <span class="kw">foreach</span> (GameObject e <span class="kw">in</span> enemies)
+                <span class="fu">DrawGameObject</span>(e);
+            <span class="kw">foreach</span> (GameObject m <span class="kw">in</span> missiles)
+                <span class="fu">DrawGameObject</span>(m);
+
+            <span class="kw">base</span>.<span class="fu">Draw</span>(gameTime);
+        }
+
+        <span class="dt">void</span> <span class="fu">DrawGameObject</span>(GameObject gameobject)
+        {
+            <span class="kw">foreach</span> (ModelMesh mesh <span class="kw">in</span> gameobject.<span class="fu">model</span>.<span class="fu">Meshes</span>)
+            {
+                <span class="kw">foreach</span> (BasicEffect effect <span class="kw">in</span> mesh.<span class="fu">Effects</span>)
+                {
+                    effect.<span class="fu">EnableDefaultLighting</span>();
+                    effect.<span class="fu">PreferPerPixelLighting</span> = <span class="kw">true</span>;
+
+                    effect.<span class="fu">World</span> =
+                        Matrix.<span class="fu">CreateFromYawPitchRoll</span>(
+                        gameobject.<span class="fu">rotation</span>.<span class="fu">Y</span>,
+                        gameobject.<span class="fu">rotation</span>.<span class="fu">X</span>,
+                        gameobject.<span class="fu">rotation</span>.<span class="fu">Z</span>) *
+
+                        Matrix.<span class="fu">CreateScale</span>(gameobject.<span class="fu">scale</span>) *
+
+                        Matrix.<span class="fu">CreateTranslation</span>(gameobject.<span class="fu">position</span>);
+
+                    effect.<span class="fu">Projection</span> = camera.<span class="fu">projection</span>;
+                    effect.<span class="fu">View</span> = camera.<span class="fu">view</span>;
+                }
+                mesh.<span class="fu">Draw</span>();
+            }
+        }
+    }
+
+    <span class="kw">class</span> GameObject
+    {
+        <span class="kw">public</span> Model model = <span class="kw">null</span>;
+        <span class="kw">public</span> Vector3 position = Vector3.<span class="fu">Zero</span>;
+        <span class="kw">public</span> Vector3 rotation = Vector3.<span class="fu">Zero</span>;
+        <span class="kw">public</span> <span class="dt">float</span> scale = <span class="fl">1.</span>0f;
+        <span class="kw">public</span> Vector3 velocity = Vector3.<span class="fu">Zero</span>;
+        <span class="kw">public</span> <span class="dt">bool</span> alive = <span class="kw">false</span>;
+    }
+    
+    <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+    <span class="co">/// This is a game component that implements IUpdateable.</span>
+    <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+    <span class="kw">public</span> <span class="kw">class</span> GameComponent_Grid : Microsoft.<span class="fu">Xna</span>.<span class="fu">Framework</span>.<span class="fu">DrawableGameComponent</span>
+    {
+        <span class="kw">public</span> <span class="dt">int</span> gridSize = <span class="dv">12</span>; <span class="co">// 每邊有 幾格</span>
+        <span class="kw">public</span> <span class="dt">float</span> gridScale = <span class="fl">1.</span>0f; <span class="co">// 每格 的 寬</span>
+        <span class="kw">public</span> Color gridColor = <span class="kw">new</span> <span class="fu">Color</span>(<span class="bn">0xFF</span>, <span class="bn">0xFF</span>, <span class="bn">0xFF</span>, <span class="bn">0xFF</span>);   <span class="co">// 格線 的顏色 內定是黑色</span>
+
+        VertexBuffer vertexBuffer; <span class="co">// 頂點緩衝區</span>
+        VertexDeclaration vertexDeclaration; <span class="co">// 頂點格式 (每個頂點 包含什麼內容)</span>
+        BasicEffect effect; <span class="co">// 產出時會用到的 效果</span>
+        <span class="dt">int</span> vertexCount;  <span class="co">// 頂點 數目</span>
+        GraphicsDevice device; <span class="co">//繪圖設備</span>
+
+        <span class="kw">public</span> Matrix world = Matrix.<span class="fu">Identity</span>; <span class="co">// 世界 觀測 投影 矩陣</span>
+
+        <span class="kw">public</span> Matrix view = Matrix.<span class="fu">CreateLookAt</span>(<span class="kw">new</span> <span class="fu">Vector3</span>(<span class="fl">0.</span>0f, <span class="fl">20.</span>0f, <span class="fl">20.</span>0f),
+                                                      Vector3.<span class="fu">Zero</span>,
+                                                      Vector3.<span class="fu">Up</span>);
+
+        <span class="kw">public</span> Matrix projection = Matrix.<span class="fu">CreatePerspectiveFieldOfView</span>(
+                                                 MathHelper.<span class="fu">ToRadians</span>(<span class="fl">45.</span>0f),
+                                                 <span class="fl">1.</span>333f, <span class="fl">1.</span>0f, <span class="fl">10000.</span>0f);
+
+        <span class="kw">public</span> <span class="fu">GameComponent_Grid</span>(Game game)
+            : <span class="kw">base</span>(game)
+        {
+            <span class="co">// TODO: Construct any child components here</span>
+            <span class="kw">this</span>.<span class="fu">device</span> = game.<span class="fu">GraphicsDevice</span>;
+        }
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// Allows the game component to perform any initialization it needs to before starting</span>
+        <span class="co">/// to run.  This is where it can query for any required services and load content.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Initialize</span>()
+        {
+            <span class="co">// TODO: Add your initialization code here</span>
+            effect = <span class="kw">new</span> <span class="fu">BasicEffect</span>(device, <span class="kw">null</span>); <span class="co">// 效果</span>
+
+            vertexCount = (gridSize + <span class="dv">1</span>) * <span class="dv">4</span>; <span class="co">// 每邊的頂點數 比 每邊的格數 多一，共有四個邊</span>
+
+            <span class="co">// 每個頂點 包含 位置 和 顏色 ，先空出 vertexCount 個 頂點</span>
+            VertexPositionColor[] vertices = <span class="kw">new</span> VertexPositionColor[vertexCount];
+
+            <span class="dt">float</span> length = (<span class="dt">float</span>)gridSize * gridScale; <span class="co">// 邊長 等於 格數 乘以 格寬</span>
+            <span class="dt">float</span> halfLength = length * <span class="fl">0.</span>5f;  <span class="co">// 半邊長 因為是要 以原點為中心 左右 各半</span>
+
+            <span class="dt">int</span> index = <span class="dv">0</span>; <span class="co">// 頂點 索引</span>
+
+            <span class="co">// 定義頂點位置  頂都是 躺在 X Z 平面上</span>
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt;= gridSize; ++i)
+            {
+                vertices[index++] = <span class="kw">new</span> <span class="fu">VertexPositionColor</span>(
+                    <span class="kw">new</span> <span class="fu">Vector3</span>(-halfLength, <span class="fl">0.</span>0f, i * gridScale - halfLength),
+                    gridColor); <span class="co">// 左邊的頂點</span>
+
+                vertices[index++] = <span class="kw">new</span> <span class="fu">VertexPositionColor</span>(
+                    <span class="kw">new</span> <span class="fu">Vector3</span>(halfLength, <span class="fl">0.</span>0f, i * gridScale - halfLength),
+                    gridColor); <span class="co">// 右邊的頂點</span>
+
+                vertices[index++] = <span class="kw">new</span> <span class="fu">VertexPositionColor</span>(
+                    <span class="kw">new</span> <span class="fu">Vector3</span>(i * gridScale - halfLength, <span class="fl">0.</span>0f, -halfLength),
+                    gridColor); <span class="co">// 上緣的頂點</span>
+
+                vertices[index++] = <span class="kw">new</span> <span class="fu">VertexPositionColor</span>(
+                    <span class="kw">new</span> <span class="fu">Vector3</span>(i * gridScale - halfLength, <span class="fl">0.</span>0f, halfLength),
+                    gridColor); <span class="co">// 下緣的頂點</span>
+            }
+
+            <span class="co">// 建立 頂點緩衝區</span>
+            vertexBuffer = <span class="kw">new</span> <span class="fu">VertexBuffer</span>(device, vertexCount *  VertexPositionColor.<span class="fu">SizeInBytes</span>,
+                                             BufferUsage.<span class="fu">WriteOnly</span>);
+            <span class="co">// 將 頂點資料 複製入 頂點緩衝區 內</span>
+            vertexBuffer.<span class="fu">SetData</span>&lt;VertexPositionColor&gt;(vertices);
+
+            <span class="co">// 頂點格式</span>
+            vertexDeclaration = <span class="kw">new</span> <span class="fu">VertexDeclaration</span>(device, VertexPositionColor.<span class="fu">VertexElements</span>);
+
+            <span class="kw">base</span>.<span class="fu">Initialize</span>();
+        }
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// Allows the game component to update itself.</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">&quot;gameTime&quot;</span><span class="kw">&gt;</span><span class="co">Provides a snapshot of timing values.</span><span class="kw">&lt;/param&gt;</span>
+        <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Update</span>(GameTime gameTime)
+        {
+            <span class="co">// TODO: Add your update code here</span>
+
+            <span class="kw">base</span>.<span class="fu">Update</span>(gameTime);
+        }
+
+        <span class="kw">public</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Draw</span>(GameTime gameTime)
+        {
+            
+            <span class="co">// 效果 三大矩陣 設定</span>
+<span class="co">//            effect.World = world;</span>
+<span class="co">//            effect.View = view;</span>
+<span class="co">//            effect.Projection = projection;</span>
+
+            effect.<span class="fu">VertexColorEnabled</span> = <span class="kw">true</span>;  <span class="co">// 使用 頂點顏色 效果</span>
+
+            device.<span class="fu">VertexDeclaration</span> = vertexDeclaration; <span class="co">// 頂點格式</span>
+            device.<span class="fu">Vertices</span>[<span class="dv">0</span>].<span class="fu">SetSource</span>(vertexBuffer, <span class="dv">0</span>, VertexPositionColor.<span class="fu">SizeInBytes</span>); <span class="co">// 頂點來源</span>
+
+            effect.<span class="fu">Begin</span>(); <span class="co">// 效果 開始</span>
+
+            <span class="kw">foreach</span> (EffectPass CurrentPass <span class="kw">in</span> effect.<span class="fu">CurrentTechnique</span>.<span class="fu">Passes</span>)
+            {
+                CurrentPass.<span class="fu">Begin</span>();
+                device.<span class="fu">DrawPrimitives</span>(PrimitiveType.<span class="fu">LineList</span>, <span class="dv">0</span>, vertexCount / <span class="dv">2</span>); <span class="co">// 兩兩畫線 所以只有 vertexCount/2 條線</span>
+                CurrentPass.<span class="fu">End</span>();
+            }
+            effect.<span class="fu">End</span>();
+        }
+    }    
+}</code></pre>
+<h2 id="從-xna-到-unity3d"><a href="#從-xna-到-unity3d">從 XNA 到 Unity3D</a></h2>
+<p>雖然 XNA 已經是成熟的技術，但是卻不支援像 Window Form 或 WPF 這樣所示即所得的開發方式，還好現在已經有一款稱為 Unity 遊戲開發軟體，可以讓您用所視即所得的方式開發 3D 的遊戲程式。Unity 是一款強大的工業級跨平台遊戲引擎 （Win PC, XBox, PS, Wii，Android......)，具有很棒的視覺化開發環境，並且支援 C# 與 JavaScript 等開發語言，並且有免費版可以下載。</p>
+<ul>
+<li>Unity 官網 -- <a href="http://unity3d.com/">http://unity3d.com/</a></li>
+</ul>
+<p>目前也已經有一些中文書介紹 Unity 的程式設計，以下是這些書的網址：</p>
+<ul>
+<li>全民做遊戲-Unity跨平台遊戲開發寶典 -- <a href="http://www.books.com.tw/exep/prod/booksfile.php?item=0010537427">http://www.books.com.tw/exep/prod/booksfile.php?item=0010537427</a></li>
+<li>Unity 3D遊戲開發設計實務 -- <a href="http://www.books.com.tw/exep/prod/booksfile.php?item=0010551893">http://www.books.com.tw/exep/prod/booksfile.php?item=0010551893</a></li>
+<li>Unity 3D遊戲開發設計學院 -- <a href="http://www.books.com.tw/exep/prod/booksfile.php?item=0010464868">http://www.books.com.tw/exep/prod/booksfile.php?item=0010464868</a></li>
+<li>遊戲工作室指導手冊：快速學會四種Unity遊戲設計(附光碟) -- <a href="http://www.books.com.tw/exep/prod/booksfile.php?item=0010570704">http://www.books.com.tw/exep/prod/booksfile.php?item=0010570704</a></li>
+</ul>
+<h2 id="參考文獻"><a href="#參考文獻">參考文獻</a></h2>
+<ul>
+<li>二維動畫圖 (Sprites) -- <a href="http://www.sprites-inc.co.uk/files/X/">http://www.sprites-inc.co.uk/files/X/</a></li>
+<li>聲音效果 -- <a href="http://www.ilovewavs.com/Effects/Music/Music.htm">http://www.ilovewavs.com/Effects/Music/Music.htm</a></li>
+<li>聲音效果 -- <a href="http://www.ilovewaves.com/">http://www.ilovewaves.com/</a></li>
+<li>網路資源</li>
+<li>XNA 官方網站 - <a href="http://creators.xna.com/">http://creators.xna.com/</a>
+<ul>
+<li>包含 Getting Start, Tutorial, Samples, Starter Kits, Articles.</li>
+</ul></li>
+<li>Stormcode 的 XNA BLOG -- <a href="http://www.stromcode.com/category/xna/">http://www.stromcode.com/category/xna/</a></li>
+<li>XNA+OGRE 的 BLOG -- <a href="http://blog.yam.com/xnaOgre">http://blog.yam.com/xnaOgre</a></li>
+<li>Reimer's XNA Tutorial -- <a href="http://www.riemers.net/eng/Tutorials/XNA/Csharp/series1.php">http://www.riemers.net/eng/Tutorials/XNA/Csharp/series1.php</a></li>
+<li>XNA 的粒子效果範例 -- <a href="http://creators.xna.com/en-US/sample/particle3d">http://creators.xna.com/en-US/sample/particle3d</a></li>
+<li>如何將 Blender 模型匯出給 XNA 使用 -- <a href="http://forums.xna.com/forums/t/4614.aspx">http://forums.xna.com/forums/t/4614.aspx</a></li>
+<li>如何將 Blender 的動作匯出給 XNA 使用 -- <a href="http://www.stromcode.com/2008/03/16/modeling-for-xna-with-blender-part-iv/">http://www.stromcode.com/2008/03/16/modeling-for-xna-with-blender-part-iv/</a></li>
+<li>Papervision3D - 五分鐘上手 (Flash 的 3D 遊戲引擎）-- <a href="http://blog.ring.idv.tw/comment.ser?i=194">http://blog.ring.idv.tw/comment.ser?i=194</a></li>
+<li>2D/3D 遊戲程式設計入門 ─ 使用XNA3.0與C#(附光碟), 作者：鄞永傳、何振揚, 出版社：文魁, 出版日期：2009年02月06日, 語言：繁體中文 ISBN：9789866482120
+<ul>
+<li><a href="http://www.books.com.tw/exep/prod/booksfile.php?item=0010426322">http://www.books.com.tw/exep/prod/booksfile.php?item=0010426322</a></li>
+</ul></li>
+<li>XNA Creator Club Online, Getting Start -- <a href="http://creators.xna.com/en-US/education/gettingstarted">http://creators.xna.com/en-US/education/gettingstarted</a></li>
+</ul>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

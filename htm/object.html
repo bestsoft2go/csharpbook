@@ -1,0 +1,830 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-程式基礎物件">C# 程式基礎：物件</a><ul>
+<li><a href="#封裝">封裝</a></li>
+<li><a href="#繼承">繼承</a></li>
+<li><a href="#多型">多型</a></li>
+<li><a href="#參考文獻">參考文獻</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-程式基礎物件"><a href="#c-程式基礎物件">C# 程式基礎：物件</a></h1>
+<p>C# 是很好的物件導向語言，而且微軟的 .NET Framework 函式庫設計得相當優美，這使得 C# 的魅力相當大。</p>
+<p>傳統的程式設計會將資料與程式分開，但是在物件導向的概念當中，資料與程式被合併成一個結構，這個結構就稱為物件。</p>
+<p>一個物件可以包含資料部分 (資料成員) 與函數部分 (函數成員)，函數成員可以對資料成員進行操作，以下是一個 C# 的物件範例，該範例中定義了一個人員 (Person1) 的結構，該結構包含兩個資料成員 (name, weight) 與一個成員函數 (checkWeight)，該函數會檢查人員結構的體重 (weight) 看看是重還是輕。另外，還包含了一個建構函數 Person1() ，這個建構函數可以讓使用者在建立物件時順便將參數傳入，這是物件導向的一種常見手法。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Object1 {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args) {
+        Person1 p1, p2;
+        p1 = <span class="kw">new</span> <span class="fu">Person1</span>(<span class="st">&quot;大雄&quot;</span>, <span class="dv">50</span>);
+        p2 = <span class="kw">new</span> <span class="fu">Person1</span>(<span class="st">&quot;胖虎&quot;</span>, <span class="dv">80</span>);
+        p1.<span class="fu">checkWeight</span>();
+        p2.<span class="fu">checkWeight</span>();
+        p2.<span class="fu">weight</span> = <span class="dv">68</span>;
+        p1.<span class="fu">checkWeight</span>();
+        p2.<span class="fu">checkWeight</span>();
+    }
+}
+
+<span class="kw">class</span> Person1 {
+    <span class="kw">public</span> <span class="dt">string</span> name;
+    <span class="kw">public</span> <span class="dt">int</span> weight;
+    
+    <span class="kw">public</span> <span class="fu">Person1</span>(<span class="dt">string</span> pName, <span class="dt">int</span> pWeight) {
+        name   = pName;
+        weight = pWeight;
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">checkWeight</span>()
+    {
+        Console.<span class="fu">Write</span>(name+<span class="st">&quot;體重 &quot;</span>+weight+<span class="st">&quot; 公斤,&quot;</span>);
+        <span class="kw">if</span> (weight &lt; <span class="dv">70</span>) 
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;很苗條!&quot;</span>);
+        <span class="kw">else</span>
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;很穩重!&quot;</span>);
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>D:\myweb\teach\CSharpProgramming&gt;csc Object1.cs
+Microsoft (R) Visual C# 2008 Compiler version 3.5.30729.1
+for Microsoft (R) .NET Framework version 3.5
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+
+D:\myweb\teach\CSharpProgramming&gt;Object1
+大雄體重 50 公斤,很苗條!
+胖虎體重 80 公斤,很穩重!
+大雄體重 50 公斤,很苗條!
+胖虎體重 68 公斤,很苗條!</code></pre>
+<h2 id="封裝"><a href="#封裝">封裝</a></h2>
+<p>在傳統的結構化程式設計 (像是 C, Fortran, Pascal) 當中，我們用函數來處理資料，但是函數與資料是完全區隔開來的兩個世界。然而，在物件導向當中，函數與資料被合為一體，形成一種稱為物件的結構，我們稱這種將函數與資料放在一起的特性為「封裝」。</p>
+<p>以下我們將以矩形物件為範例，說明 C# 當中的封裝語法，以及物件導向中的封裝概念。</p>
+<h3 id="範例一封裝----將函數與資料裝入物件當中"><a href="#範例一封裝----將函數與資料裝入物件當中">範例一：封裝 -- 將函數與資料裝入物件當中</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Rectangle
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>();
+        r.<span class="fu">width</span> = <span class="fl">5.0</span>;
+        r.<span class="fu">height</span> = <span class="fl">8.0</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>r.area() = 40</code></pre>
+<h3 id="修改進化版"><a href="#修改進化版">修改進化版</a></h3>
+<p>由於上述物件與主程式混在一起，可能容易造成誤解，因此我們將主程式獨立出來，並且新增了一個 r2 的矩形物件，此時程式如下所示。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Rectangle
+{
+    <span class="kw">public</span> <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Test
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>();
+        r.<span class="fu">width</span> = <span class="fl">5.0</span>;
+        r.<span class="fu">height</span> = <span class="fl">8.0</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+
+        Rectangle r2 = <span class="kw">new</span> <span class="fu">Rectangle</span>();
+        r2.<span class="fu">width</span> = <span class="fl">7.0</span>;
+        r2.<span class="fu">height</span> = <span class="fl">4.0</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r2.area() = &quot;</span> + r2.<span class="fu">area</span>());
+    }
+}</code></pre>
+<p>執行結果：</p>
+<pre><code>r.area() = 40
+r2.area() = 28</code></pre>
+<h3 id="範例二加上建構函數"><a href="#範例二加上建構函數">範例二：加上建構函數</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Rectangle
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+    }
+
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>r.area() = 40</code></pre>
+<h3 id="範例二加上建構函數----同時有-0-個與兩個引數"><a href="#範例二加上建構函數----同時有-0-個與兩個引數">範例二：加上建構函數 -- 同時有 0 個與兩個引數</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Rectangle
+{
+    <span class="kw">public</span> <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>() { }
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+    }
+
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Test
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+
+        Rectangle r2 = <span class="kw">new</span> <span class="fu">Rectangle</span>();
+        r2.<span class="fu">width</span> = <span class="fl">7.0</span>;
+        r2.<span class="fu">height</span> = <span class="fl">4.0</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r2.area() = &quot;</span> + r2.<span class="fu">area</span>());
+    }
+}</code></pre>
+<h3 id="習題向量物件"><a href="#習題向量物件">習題：向量物件</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Vector
+{
+    <span class="dt">double</span>[] a;
+
+    <span class="kw">public</span> <span class="fu">Vector</span>(<span class="dt">double</span>[] array)
+    {
+        a = <span class="kw">new</span> <span class="dt">double</span>[array.<span class="fu">GetLength</span>(<span class="dv">0</span>)];
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; a.<span class="fu">GetLength</span>(<span class="dv">0</span>); i++)
+        {
+            a[i] = array[i];
+        }
+    }
+
+    <span class="kw">public</span> Vector <span class="fu">add</span>(Vector v2)
+    {
+        Vector rv = <span class="kw">new</span> <span class="fu">Vector</span>(v2.<span class="fu">a</span>);
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; rv.<span class="fu">a</span>.<span class="fu">GetLength</span>(<span class="dv">0</span>); i++)
+        {
+            rv.<span class="fu">a</span>[i] = <span class="kw">this</span>.<span class="fu">a</span>[i] + v2.<span class="fu">a</span>[i];
+        }
+        <span class="kw">return</span> rv;
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">print</span>()
+    {
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; a.<span class="fu">GetLength</span>(<span class="dv">0</span>); i++)
+        {
+            Console.<span class="fu">Write</span>(a[i] + <span class="st">&quot; &quot;</span>);
+        }
+        Console.<span class="fu">WriteLine</span>();
+    }
+}
+
+<span class="kw">class</span> Test
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Vector v1 = <span class="kw">new</span> <span class="fu">Vector</span>(<span class="kw">new</span> <span class="dt">double</span>[] { <span class="fl">1.0</span>, <span class="fl">2.0</span>, <span class="fl">3.0</span> });
+        Vector v2 = <span class="kw">new</span> <span class="fu">Vector</span>(<span class="kw">new</span> <span class="dt">double</span>[] { <span class="fl">4.0</span>, <span class="fl">5.0</span>, <span class="fl">6.0</span> });
+        Vector v3 = v1.<span class="fu">add</span>(v2);
+
+        v1.<span class="fu">print</span>();
+        v2.<span class="fu">print</span>();
+        v3.<span class="fu">print</span>();
+    }
+}</code></pre>
+<p>進階練習 1：加上內積的函數，並寫出呼叫範例。 進階練習 2：寫出矩陣物件 (有加法、乘法) (方法一：用二維陣列、方法二：用 Vector)。</p>
+<h3 id="習題矩陣物件"><a href="#習題矩陣物件">習題：矩陣物件</a></h3>
+<h2 id="繼承"><a href="#繼承">繼承</a></h2>
+<h3 id="範例一矩形圓形繼承形狀-shape"><a href="#範例一矩形圓形繼承形狀-shape">範例一：矩形、圓形繼承形狀 (Shape)</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Shape
+{
+    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">double</span> <span class="fu">area</span>() { <span class="kw">return</span> <span class="fl">0.0</span>; }
+}
+
+<span class="kw">class</span> Rectangle : Shape
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Circle : Shape
+{
+    <span class="dt">double</span> r;
+
+    <span class="kw">public</span> <span class="fu">Circle</span>(<span class="dt">double</span> r)
+    {
+        <span class="kw">this</span>.<span class="fu">r</span> = r;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> <span class="fl">3.1416</span> * r * r;
+    }
+}
+
+<span class="kw">class</span> Test
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Shape s = <span class="kw">new</span> <span class="fu">Shape</span>();
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;s.area() = &quot;</span> + s.<span class="fu">area</span>());
+
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+
+        Circle c = <span class="kw">new</span> <span class="fu">Circle</span>(<span class="dv">2</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.area() = &quot;</span> + c.<span class="fu">area</span>());
+    }
+}</code></pre>
+<p>執行結果：</p>
+<pre><code>s.area() = 0
+r.area() = 40
+c.area() = 12.5664</code></pre>
+<h3 id="範例二加入厚度與體積函數-在子物件使用父物件的欄位"><a href="#範例二加入厚度與體積函數-在子物件使用父物件的欄位">範例二：加入厚度與體積函數 (在子物件使用父物件的欄位)</a></h3>
+<p>執行結果</p>
+<pre><code>s.area() = 0
+r.area() = 40
+r.volume() = 80
+c.area() = 12.5664
+c.volume() = 37.6992
+c.volume() = 62.832</code></pre>
+<p>程式碼</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Shape
+{
+    <span class="kw">public</span> <span class="dt">double</span> thick;
+    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">double</span> <span class="fu">area</span>() { <span class="kw">return</span> <span class="fl">0.0</span>; }
+}
+
+<span class="kw">class</span> Rectangle : Shape
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+        thick = <span class="fl">2.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">volume</span>()
+    {
+        <span class="kw">return</span> width * height * thick;
+    }
+}
+
+<span class="kw">class</span> Circle : Shape
+{
+    <span class="dt">double</span> r;
+
+    <span class="kw">public</span> <span class="fu">Circle</span>(<span class="dt">double</span> r)
+    {
+        <span class="kw">this</span>.<span class="fu">r</span> = r;
+        thick = <span class="fl">3.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> <span class="fl">3.1416</span> * r * r;
+    }
+
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">volume</span>()
+    {
+        <span class="kw">return</span> <span class="fu">area</span>() * thick;
+    }
+}
+
+<span class="kw">class</span> Test
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Shape s = <span class="kw">new</span> <span class="fu">Shape</span>();
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;s.area() = &quot;</span> + s.<span class="fu">area</span>());
+
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.volume() = &quot;</span> + r.<span class="fu">volume</span>());
+
+        Circle c = <span class="kw">new</span> <span class="fu">Circle</span>(<span class="dv">2</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.area() = &quot;</span> + c.<span class="fu">area</span>());
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.volume() = &quot;</span> + c.<span class="fu">volume</span>());
+        c.<span class="fu">thick</span> = <span class="dv">5</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.volume() = &quot;</span> + c.<span class="fu">volume</span>());
+    }
+}</code></pre>
+<h3 id="範例三將-volume-函數提到-shape-物件中"><a href="#範例三將-volume-函數提到-shape-物件中">範例三：將 volume() 函數提到 Shape 物件中</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Shape
+{
+    <span class="kw">public</span> <span class="dt">double</span> thick;
+    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">double</span> <span class="fu">area</span>() { <span class="kw">return</span> <span class="fl">0.0</span>; }
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">volume</span>()
+    {
+        <span class="kw">return</span> <span class="fu">area</span>() * thick;
+    }
+}
+
+<span class="kw">class</span> Rectangle : Shape
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+        thick = <span class="fl">2.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Circle : Shape
+{
+    <span class="dt">double</span> r;
+
+    <span class="kw">public</span> <span class="fu">Circle</span>(<span class="dt">double</span> r)
+    {
+        <span class="kw">this</span>.<span class="fu">r</span> = r;
+        thick = <span class="fl">3.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> <span class="fl">3.1416</span> * r * r;
+    }
+}
+
+<span class="kw">class</span> Test
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Shape s = <span class="kw">new</span> <span class="fu">Shape</span>();
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;s.area() = &quot;</span> + s.<span class="fu">area</span>());
+
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.volume() = &quot;</span> + r.<span class="fu">volume</span>());
+
+        Circle c = <span class="kw">new</span> <span class="fu">Circle</span>(<span class="dv">2</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.area() = &quot;</span> + c.<span class="fu">area</span>());
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.volume() = &quot;</span> + c.<span class="fu">volume</span>());
+        c.<span class="fu">thick</span> = <span class="dv">5</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.volume() = &quot;</span> + c.<span class="fu">volume</span>());
+    }
+}</code></pre>
+<h3 id="習題人學生與老師"><a href="#習題人學生與老師">習題：人、學生與老師</a></h3>
+<p>請定義「人、學生與老師」等三個類別，其中的人有「姓名、性別、年齡」三個欄位，學生另外有「學號、年級」等兩個欄位，老師另外有「職等」的欄位，所有物件都有 print() 函數，可以將該物件的所有欄位印出。</p>
+<p>請建立一個具有 3 個學生與兩個老師的陣列，利用多型機制，呼叫 print 函數以便印出這 5 個人的基本資料，如下所示。</p>
+<pre><code>學生 --  姓名：王小明，性別：男，年齡：20，學號：R773122456，年級：一年級
+學生 --  姓名：李小華，性別：女，年齡：19，學號：R773122432，年級：一年級
+教師 --  姓名：陳福氣，性別：男，年齡：40，職等：教授
+學生 --  姓名：黃大虎，性別：男，年齡：22，學號：R773122721，年級：四年級
+教師 --  姓名：李美女，性別：女，年齡：35，職等：助理教授</code></pre>
+<p>解答：</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+
+<span class="kw">namespace</span> Person
+{
+<span class="co">/*</span>
+<span class="co"> * 請定義「人、學生與老師」等三個類別，其中的人有「姓名、性別、年齡」三個欄位，</span>
+<span class="co"> * 學生另外有「學號、年級」等兩個欄位，老師另外有「職等」的欄位，所有物件都有 </span>
+<span class="co"> * print() 函數，可以將該物件的所有欄位印出。</span>
+<span class="co"> * </span>
+<span class="co"> * 請建立一個具有 3 個學生與兩個老師的陣列，利用多型機制，呼叫 print 函數以便</span>
+<span class="co"> * 印出這 5 個人的基本資料，如下所示。    </span>
+<span class="co"> * </span>
+<span class="co"> * 學生 --  姓名：王小明，性別：男，年齡：20，學號：R773122456，年級：一年級</span>
+<span class="co"> * 學生 --  姓名：李小華，性別：女，年齡：19，學號：R773122432，年級：一年級</span>
+<span class="co"> * 教師 --  姓名：陳福氣，性別：男，年齡：40，職等：教授</span>
+<span class="co"> * 學生 --  姓名：黃大虎，性別：男，年齡：22，學號：R773122721，年級：四年級</span>
+<span class="co"> * 教師 --  姓名：李美女，性別：女，年齡：35，職等：助理教授</span>
+<span class="co">*/</span>
+        <span class="kw">class</span> Program
+        {
+            <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+            {
+                Student s1 = <span class="kw">new</span> <span class="fu">Student</span>(<span class="st">&quot;王小明&quot;</span>, <span class="st">&quot;男&quot;</span>, <span class="dv">20</span>, <span class="st">&quot;R773122456&quot;</span>, <span class="dv">1</span>);
+                Student s2 = <span class="kw">new</span> <span class="fu">Student</span>(<span class="st">&quot;李小華&quot;</span>, <span class="st">&quot;女&quot;</span>, <span class="dv">19</span>, <span class="st">&quot;R773122432&quot;</span>, <span class="dv">1</span>);
+                Student s3 = <span class="kw">new</span> <span class="fu">Student</span>(<span class="st">&quot;黃大虎&quot;</span>, <span class="st">&quot;男&quot;</span>, <span class="dv">22</span>, <span class="st">&quot;R773122721&quot;</span>, <span class="dv">4</span>);
+                Person t1 = <span class="kw">new</span> <span class="fu">Person</span>(<span class="st">&quot;陳福氣&quot;</span>, <span class="st">&quot;男&quot;</span>, <span class="dv">40</span>);
+                Person t2 = <span class="kw">new</span> <span class="fu">Person</span>(<span class="st">&quot;李美女&quot;</span>, <span class="st">&quot;女&quot;</span>, <span class="dv">35</span>);
+
+                Person[] list = { s1, s2, t1, s3, t2 };
+                <span class="kw">foreach</span> (Person p <span class="kw">in</span> list)
+                {
+                    p.<span class="fu">print</span>();
+                    Console.<span class="fu">WriteLine</span>();
+                }
+            }
+        }
+
+        <span class="kw">class</span> Person
+        {
+            String name;
+            String sex;
+            <span class="dt">int</span> age;
+
+            <span class="kw">public</span> <span class="fu">Person</span>(String name, String sex, <span class="dt">int</span> age)
+            {
+                <span class="kw">this</span>.<span class="fu">name</span> = name;
+                <span class="kw">this</span>.<span class="fu">sex</span> = sex;
+                <span class="kw">this</span>.<span class="fu">age</span> = age;
+            }
+
+            <span class="kw">public</span> <span class="kw">virtual</span> Person <span class="fu">print</span>()
+            {
+                Console.<span class="fu">Write</span>(<span class="st">&quot;姓名：&quot;</span>+name+<span class="st">&quot; 性別：&quot;</span>+sex+<span class="st">&quot; 年齡：&quot;</span>+age);
+                <span class="kw">return</span> <span class="kw">this</span>;
+            }
+        }
+
+        <span class="kw">class</span> Student : Person
+        {
+            String id;
+            <span class="dt">int</span> degree;
+
+            <span class="kw">public</span> <span class="fu">Student</span>(String name, String sex, <span class="dt">int</span> age, String id, <span class="dt">int</span> degree)
+                : <span class="kw">base</span>(name, sex, age)
+            {
+                <span class="kw">this</span>.<span class="fu">id</span> = id;
+                <span class="kw">this</span>.<span class="fu">degree</span> = degree;
+            }
+
+            <span class="kw">public</span> <span class="kw">override</span> Person <span class="fu">print</span>()
+            {
+                Console.<span class="fu">Write</span>(<span class="st">&quot;學生 -- &quot;</span>);
+                <span class="kw">base</span>.<span class="fu">print</span>();
+                Console.<span class="fu">Write</span>(<span class="st">&quot; 學號：&quot;</span> + id + <span class="st">&quot; 年級：&quot;</span> + degree);
+                <span class="kw">return</span> <span class="kw">this</span>;
+            }
+        }
+}</code></pre>
+<h2 id="多型"><a href="#多型">多型</a></h2>
+<p>物件導向的多型機制，是指當兩個以上的類別繼承同一種父類別時，我們可以用父類別型態容納子類別的物件，真正進行函數呼叫時會呼叫到子類別的函數，此種特性稱之為多型。</p>
+<p>以下是我們用 C# 實作的一個多型範例，在範例中，我們宣告了一個形狀類別，該類別具有一個 area() 函數可以計算該形狀的面積，然後我們又宣告了兩個子類別 Rectangle (矩形) 與 Circle (圓形)。我們將兩者放入到 shapes 陣列中，以便展示多型技巧，用父類別容器呼叫子類別的實體。</p>
+<h3 id="範例形狀矩形與圓形"><a href="#範例形狀矩形與圓形">範例：形狀、矩形與圓形</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Shape
+{
+    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">double</span> <span class="fu">area</span>() { <span class="kw">return</span> <span class="fl">0.0</span>; }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+
+        Circle c = <span class="kw">new</span> <span class="fu">Circle</span>(<span class="fl">3.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.area() = &quot;</span> + c.<span class="fu">area</span>());
+
+        Shape[] shapes = { r, c };
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; shapes.<span class="fu">Length</span>; i++)
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;shapes[&quot;</span> + i + <span class="st">&quot;].area()=&quot;</span> + shapes[i].<span class="fu">area</span>());
+    }
+}
+
+<span class="kw">class</span> Rectangle : Shape
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Circle : Shape
+{
+    <span class="dt">double</span> r;
+
+    <span class="kw">public</span> <span class="fu">Circle</span>(<span class="dt">double</span> r)
+    {
+        <span class="kw">this</span>.<span class="fu">r</span> = r;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> <span class="fl">3.1416</span> * r * r;
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>r.area() = 40
+c.area() = 28.2744
+shapes[0].area()=40
+shapes[1].area()=28.2744</code></pre>
+<h3 id="範例使用抽象父型態"><a href="#範例使用抽象父型態">範例：使用抽象父型態</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> ShapeTest
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+
+        Circle c = <span class="kw">new</span> <span class="fu">Circle</span>(<span class="fl">3.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.area() = &quot;</span> + c.<span class="fu">area</span>());
+
+        Shape[] shapes = { r, c };
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; shapes.<span class="fu">Length</span>; i++)
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;shapes[&quot;</span> + i + <span class="st">&quot;].area()=&quot;</span> + shapes[i].<span class="fu">area</span>());
+    }
+}
+
+<span class="kw">abstract</span> <span class="kw">class</span> Shape
+{
+    <span class="kw">public</span> <span class="kw">abstract</span> <span class="dt">double</span> <span class="fu">area</span>();
+
+}
+
+<span class="kw">class</span> Rectangle : Shape
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Circle : Shape
+{
+    <span class="dt">double</span> r;
+
+    <span class="kw">public</span> <span class="fu">Circle</span>(<span class="dt">double</span> r)
+    {
+        <span class="kw">this</span>.<span class="fu">r</span> = r;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> <span class="fl">3.1416</span> * r * r;
+    }
+}</code></pre>
+<p>執行結果： <code>r.area() = 40 c.area() = 28.2744 shapes[0].area()=40 shapes[1].area()=28.2744</code></p>
+<h3 id="範例使用介面"><a href="#範例使用介面">範例：使用介面</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> ShapeTest
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+
+        Circle c = <span class="kw">new</span> <span class="fu">Circle</span>(<span class="fl">3.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.area() = &quot;</span> + c.<span class="fu">area</span>());
+
+        Shape[] shapes = { r, c };
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; shapes.<span class="fu">Length</span>; i++)
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;shapes[&quot;</span> + i + <span class="st">&quot;].area()=&quot;</span> + shapes[i].<span class="fu">area</span>());
+    }
+}
+
+<span class="kw">interface</span> Shape
+{
+    <span class="dt">double</span> <span class="fu">area</span>();
+
+}
+
+<span class="kw">class</span> Rectangle : Shape
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+    }
+
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Circle : Shape
+{
+    <span class="dt">double</span> r;
+
+    <span class="kw">public</span> <span class="fu">Circle</span>(<span class="dt">double</span> r)
+    {
+        <span class="kw">this</span>.<span class="fu">r</span> = r;
+    }
+
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> <span class="fl">3.1416</span> * r * r;
+    }
+}</code></pre>
+<p>執行結果：</p>
+<pre><code>r.area() = 40
+c.area() = 28.2744
+shapes[0].area()=40
+shapes[1].area()=28.2744</code></pre>
+<h3 id="範例較完整複雜的版本"><a href="#範例較完整複雜的版本">範例：較完整複雜的版本</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+
+<span class="kw">class</span> Shape
+{
+    <span class="kw">public</span> <span class="dt">double</span> thick = <span class="fl">0.0</span>;
+    <span class="kw">public</span> <span class="kw">virtual</span> <span class="dt">double</span> <span class="fu">area</span>() { <span class="kw">return</span> <span class="fl">0.0</span>; }
+    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">volume</span>()
+    {
+        <span class="kw">return</span> <span class="fu">area</span>() * thick;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> String <span class="fu">ToString</span>()
+    {
+        <span class="kw">return</span> <span class="st">&quot;Shape: thick=&quot;</span> + thick+<span class="st">&quot; area=&quot;</span>+<span class="fu">area</span>()+<span class="st">&quot; volume=&quot;</span>+<span class="fu">volume</span>();
+    }
+}
+
+<span class="kw">class</span> Rectangle : Shape
+{
+    <span class="dt">double</span> width, height;
+
+    <span class="kw">public</span> <span class="fu">Rectangle</span>(<span class="dt">double</span> w, <span class="dt">double</span> h)
+    {
+        width = w;
+        height = h;
+        thick = <span class="fl">2.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> String <span class="fu">ToString</span>()
+    {
+        <span class="kw">return</span> <span class="kw">base</span>.<span class="fu">ToString</span>()+<span class="st">&quot; Rectangle:width=&quot;</span> + width + <span class="st">&quot; height=&quot;</span> + height;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> width * height;
+    }
+}
+
+<span class="kw">class</span> Circle : Shape
+{
+    <span class="dt">double</span> r;
+
+    <span class="kw">public</span> <span class="fu">Circle</span>(<span class="dt">double</span> r)
+    {
+        <span class="kw">this</span>.<span class="fu">r</span> = r;
+        thick = <span class="fl">3.0</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> String <span class="fu">ToString</span>()
+    {
+        <span class="kw">return</span> <span class="kw">base</span>.<span class="fu">ToString</span>() + <span class="st">&quot; Circle:r=&quot;</span> + r + <span class="st">&quot; thick=&quot;</span> + thick;
+    }
+
+    <span class="kw">public</span> <span class="kw">override</span> <span class="dt">double</span> <span class="fu">area</span>()
+    {
+        <span class="kw">return</span> <span class="fl">3.1416</span> * r * r;
+    }
+}
+
+<span class="kw">class</span> Test
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        Shape s = <span class="kw">new</span> <span class="fu">Shape</span>();
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;s.area() = &quot;</span> + s.<span class="fu">area</span>());
+
+        Rectangle r = <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="fl">5.0</span>, <span class="fl">8.0</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.area() = &quot;</span> + r.<span class="fu">area</span>());
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;r.volume() = &quot;</span> + r.<span class="fu">volume</span>());
+
+        Circle c = <span class="kw">new</span> <span class="fu">Circle</span>(<span class="dv">2</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.area() = &quot;</span> + c.<span class="fu">area</span>());
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.volume() = &quot;</span> + c.<span class="fu">volume</span>());
+        c.<span class="fu">thick</span> = <span class="dv">5</span>;
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;c.volume() = &quot;</span> + c.<span class="fu">volume</span>());
+
+        Shape[] array = <span class="kw">new</span> Shape[] { s, r, c, r };
+        <span class="kw">foreach</span> (Shape o <span class="kw">in</span> array)
+        {
+<span class="co">//            Console.WriteLine(&quot;o.area()=&quot; + o.area() +&quot; o.volume()=&quot;+o.volume());</span>
+            Console.<span class="fu">WriteLine</span>(o.<span class="fu">ToString</span>());
+        }
+    }
+}</code></pre>
+<h2 id="參考文獻"><a href="#參考文獻">參考文獻</a></h2>
+<ul>
+<li>C# 教學課程
+<ul>
+<li>結構教學課程 - <a href="http://msdn.microsoft.com/zh-tw/library/aa288471(VS.71).aspx">http://msdn.microsoft.com/zh-tw/library/aa288471(VS.71).aspx</a></li>
+<li>使用者定義轉換教學課程 - <a href="http://msdn.microsoft.com/zh-tw/library/aa288476(VS.71).aspx">http://msdn.microsoft.com/zh-tw/library/aa288476(VS.71).aspx</a></li>
+<li>運算子多載化教學課程 - <a href="http://msdn.microsoft.com/zh-tw/library/aa288467(VS.71).aspx">http://msdn.microsoft.com/zh-tw/library/aa288467(VS.71).aspx</a></li>
+</ul></li>
+</ul>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

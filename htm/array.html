@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-程式基礎陣列">C# 程式基礎：陣列</a><ul>
+<li><a href="#一維陣列">一維陣列</a></li>
+<li><a href="#二維陣列">二維陣列</a></li>
+<li><a href="#參考文獻">參考文獻</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-程式基礎陣列"><a href="#c-程式基礎陣列">C# 程式基礎：陣列</a></h1>
+<p>陣列是傳統程式設計上用來儲存很多個元素的資料結構。有了陣列，我們就可以將無數的資料放入程式當中以供存取、排序或搜尋。雖然在現代的語言當中都會有其他更方便的容器存在，像是字典 (Dictionary)，但這些容器也通常是利用陣列所實作出來的。</p>
+<h2 id="一維陣列"><a href="#一維陣列">一維陣列</a></h2>
+<p>C# 當中的陣列是用中括號的方式宣告的。舉例而言，假如我們想宣告一個陣列可以儲存一年當中每個月的天數，我們可以用下列程式表示。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="dt">int</span>[] days;
+days = <span class="kw">new</span> <span class="dt">int</span>[<span class="dv">12</span>];
+days[<span class="dv">0</span>]=<span class="dv">31</span>; days[<span class="dv">1</span>]=<span class="dv">28</span>; days[<span class="dv">2</span>] =<span class="dv">31</span>; days[<span class="dv">3</span>]=<span class="dv">30</span>;
+days[<span class="dv">4</span>]=<span class="dv">31</span>; days[<span class="dv">5</span>]=<span class="dv">30</span>; days[<span class="dv">6</span>] =<span class="dv">31</span>; days[<span class="dv">7</span>]=<span class="dv">31</span>;
+days[<span class="dv">8</span>]=<span class="dv">30</span>; days[<span class="dv">9</span>]=<span class="dv">31</span>; days[<span class="dv">10</span>]=<span class="dv">30</span>; days[<span class="dv">11</span>]=<span class="dv">31</span>;</code></pre>
+<p>請注意，由於 C# 繼承了 C 語言的習慣，陣列都是從 0 開始算起的。所以在上述程式中，我們用 days[0] 代表 1 月的天數，days[1] 代表 2 月的天數，以此類推，...。</p>
+<p>然而，僅僅宣告每個月的天數，就需要這莫多指令，未免也太複雜了。因此，C# 語言允許我們直接設定陣列的初值，以下是我們用很簡潔的語法做到與上述範例相同的功能，但卻只要用一行就夠了。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="dt">int</span>[] days = { <span class="dv">31</span>, <span class="dv">28</span>, <span class="dv">31</span>, <span class="dv">30</span>, <span class="dv">31</span>, <span class="dv">30</span>, <span class="dv">31</span>, <span class="dv">31</span>, <span class="dv">30</span>, <span class="dv">31</span>, <span class="dv">30</span>, <span class="dv">31</span> };</code></pre>
+<p>有了陣列之後，我們就可以透過迴圈的方式，逐一存取陣列的內容。舉例而言，我們可以利用下列程式計算一年當中所有月份的天數總和。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="dt">int</span> count = <span class="dv">0</span>;
+<span class="kw">for</span> (<span class="dt">int</span> i=<span class="dv">0</span>; i&lt;<span class="dv">12</span>; i++)
+   count += days[i];</code></pre>
+<p>如果您經常寫程式，就會覺得上述範例中的 for 迴圈語法仍然不夠簡潔，因為我們總是要寫 (i=0; i&lt; ...; i++)。所以 C# 當中設計了一種更簡潔的迴圈語法，用來巡訪陣列或容器當中的每個元素，這個語法稱為 foreach。</p>
+<p>我們可以用 foreach 寫出計算天數總和的程式如以下範例所示，在本範例中我們用 d 變數取出每個月的天數後，將之加入 count 變數以便計算總和。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="dt">int</span> count = <span class="dv">0</span>;
+<span class="kw">foreach</span> (<span class="dt">int</span> d <span class="kw">in</span> days)
+  count += d;</code></pre>
+<h3 id="作業請寫出內積的版本-int-c-innerproductab"><a href="#作業請寫出內積的版本-int-c-innerproductab">作業：請寫出內積的版本 int c = innerProduct(a,b)</a></h3>
+<p>解答：</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+
+<span class="kw">namespace</span> ArrayTest
+{
+    <span class="kw">class</span> Program
+    {
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+        {
+            <span class="dt">int</span>[,] a1 = { { <span class="dv">1</span>, <span class="dv">2</span> }, { <span class="dv">3</span>, <span class="dv">4</span> } };
+            <span class="dt">int</span>[,] b1 = { { <span class="dv">3</span>, <span class="dv">4</span> }, { <span class="dv">5</span>, <span class="dv">6</span> } };
+            <span class="dt">int</span>[,] c1 = <span class="kw">new</span> <span class="dt">int</span>[<span class="dv">2</span>, <span class="dv">2</span>];
+
+            <span class="dt">int</span>[] a = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span> };
+            <span class="dt">int</span>[] b = { <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span> };
+            <span class="dt">int</span>[] c = <span class="kw">new</span> <span class="dt">int</span>[<span class="dv">5</span>];
+
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; a.<span class="fu">Length</span>; i++)
+            {
+                c[i] = a[i] + b[i];
+            }
+
+            <span class="dt">int</span>[] d = <span class="kw">new</span> <span class="dt">int</span>[<span class="dv">5</span>];
+            <span class="fu">arrayAdd2</span>(a, b, d);
+
+            <span class="dt">int</span>[] e = <span class="fu">arrayAdd</span>(a, b);
+
+            <span class="fu">printArray</span>(a);
+            <span class="fu">printArray</span>(b);
+            <span class="fu">printArray</span>(c);
+            <span class="fu">printArray</span>(d);
+            <span class="fu">printArray</span>(e);
+        }
+
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">printArray</span>(<span class="dt">int</span>[] x)
+        {
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">Length</span>; i++)
+                Console.<span class="fu">Write</span>(x[i] + <span class="st">&quot; &quot;</span>);
+            Console.<span class="fu">WriteLine</span>();
+        }
+
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">arrayAdd2</span>(<span class="dt">int</span>[] x, <span class="dt">int</span>[] y, <span class="dt">int</span>[] z)
+        {
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">Length</span>; i++)
+            {
+                z[i] = x[i] + y[i];
+            }
+        }
+
+        <span class="kw">static</span> <span class="dt">int</span>[] <span class="fu">arrayAdd</span>(<span class="dt">int</span>[] x, <span class="dt">int</span>[] y)
+        {
+            <span class="dt">int</span>[] z= <span class="kw">new</span> <span class="dt">int</span>[x.<span class="fu">Length</span>];
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">Length</span>; i++)
+            {
+                z[i] = x[i] + y[i];
+            }
+            <span class="kw">return</span> z;
+        }
+    }
+}</code></pre>
+<h2 id="二維陣列"><a href="#二維陣列">二維陣列</a></h2>
+<p>以下我們用「矩陣加法」作為範例，以說明 C# 二維陣列的用法。</p>
+<p>範例：請寫出矩陣的加法 int[,] c = matrixAdd(a,b)</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+
+<span class="kw">namespace</span> ArrayTest
+{
+    <span class="kw">class</span> Program
+    {
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+        {
+            <span class="dt">int</span>[] a = { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span> };
+            <span class="dt">int</span>[] b = { <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span> };
+            <span class="dt">int</span>[] c = <span class="kw">new</span> <span class="dt">int</span>[<span class="dv">5</span>];
+
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; a.<span class="fu">Length</span>; i++)
+            {
+                c[i] = a[i] + b[i];
+            }
+
+            <span class="dt">int</span>[] d = <span class="kw">new</span> <span class="dt">int</span>[<span class="dv">5</span>];
+            <span class="fu">arrayAdd2</span>(a, b, d);
+
+            <span class="dt">int</span>[] e = <span class="fu">arrayAdd</span>(a, b);
+
+            <span class="fu">printArray</span>(a);
+            <span class="fu">printArray</span>(b);
+            <span class="fu">printArray</span>(c);
+            <span class="fu">printArray</span>(d);
+            <span class="fu">printArray</span>(e);
+        }
+
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">printArray</span>(<span class="dt">int</span>[] x)
+        {
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">Length</span>; i++)
+                Console.<span class="fu">Write</span>(x[i] + <span class="st">&quot; &quot;</span>);
+            Console.<span class="fu">WriteLine</span>();
+        }
+
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">arrayAdd2</span>(<span class="dt">int</span>[] x, <span class="dt">int</span>[] y, <span class="dt">int</span>[] z)
+        {
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">Length</span>; i++)
+            {
+                z[i] = x[i] + y[i];
+            }
+        }
+
+        <span class="kw">static</span> <span class="dt">int</span>[] <span class="fu">arrayAdd</span>(<span class="dt">int</span>[] x, <span class="dt">int</span>[] y)
+        {
+            <span class="dt">int</span>[] z= <span class="kw">new</span> <span class="dt">int</span>[x.<span class="fu">Length</span>];
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">Length</span>; i++)
+            {
+                z[i] = x[i] + y[i];
+            }
+            <span class="kw">return</span> z;
+        }
+    }
+}</code></pre>
+<h3 id="進階題矩陣的轉置"><a href="#進階題矩陣的轉置">進階題：矩陣的轉置</a></h3>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+
+<span class="kw">namespace</span> ConsoleApplication1
+{
+    <span class="kw">class</span> Program
+    {
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+        {
+            <span class="dt">double</span>[,] a = { { <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> }, { <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span> } };
+            <span class="dt">double</span>[,] b = { { <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span> }, { <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">1</span> } };
+            <span class="dt">double</span>[,] at = <span class="fu">transpose</span>(a);
+
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;a.GetLength(0)=&quot;</span> + a.<span class="fu">GetLength</span>(<span class="dv">0</span>));
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;a.GetLength(1)=&quot;</span> + a.<span class="fu">GetLength</span>(<span class="dv">1</span>));
+            <span class="fu">printMatrix</span>(<span class="st">&quot;a&quot;</span>, a);
+            <span class="fu">printMatrix</span>(<span class="st">&quot;b&quot;</span>, b);
+            <span class="fu">printMatrix</span>(<span class="st">&quot;at&quot;</span>, at);
+        }
+
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">printMatrix</span>(String name, <span class="dt">double</span>[,] x)
+        {
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;==========&quot;</span> + name + <span class="st">&quot;==============&quot;</span>);
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">GetLength</span>(<span class="dv">0</span>); i++)
+            {
+                <span class="kw">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; x.<span class="fu">GetLength</span>(<span class="dv">1</span>); j++)
+                {
+                    Console.<span class="fu">Write</span>(x[i,j]+<span class="st">&quot; &quot;</span>);
+                }
+                Console.<span class="fu">WriteLine</span>();
+            }
+        }
+
+        <span class="kw">static</span> <span class="dt">double</span>[,] <span class="fu">transpose</span>(<span class="dt">double</span> [,] x)
+        {
+            <span class="dt">double</span>[,] t = <span class="kw">new</span> <span class="dt">double</span>[x.<span class="fu">GetLength</span>(<span class="dv">1</span>), x.<span class="fu">GetLength</span>(<span class="dv">0</span>)];
+            <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; x.<span class="fu">GetLength</span>(<span class="dv">0</span>); i++)
+            {
+                <span class="kw">for</span> (<span class="dt">int</span> j = <span class="dv">0</span>; j &lt; x.<span class="fu">GetLength</span>(<span class="dv">1</span>); j++)
+                {
+                    t[j, i] = x[i, j];
+                }
+            }
+            <span class="kw">return</span> t;
+        }
+
+    }
+}</code></pre>
+<h3 id="加分題請寫出矩陣的乘法-int-c-matrixmulab"><a href="#加分題請寫出矩陣的乘法-int-c-matrixmulab">加分題：請寫出矩陣的乘法 int[,] c = matrixMul(a,b)</a></h3>
+<h2 id="參考文獻"><a href="#參考文獻">參考文獻</a></h2>
+<ul>
+<li>C# 教學課程
+<ul>
+<li>陣列教學課程 - http://msdn.microsoft.com/zh-tw/library/aa288453(VS.71).aspx</li>
+<li>索引子教學課程 - http://msdn.microsoft.com/zh-tw/library/aa288465(VS.71).aspx</li>
+<li>索引屬性教學課程 - http://msdn.microsoft.com/zh-tw/library/aa288464(VS.71).aspx</li>
+</ul></li>
+</ul>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

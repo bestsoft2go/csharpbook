@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-網路程式簡介ip-與-url">C# 網路程式：簡介、IP 與 URL</a><ul>
+<li><a href="#簡介">簡介</a></li>
+<li><a href="#ip-層的程式設計">IP 層的程式設計</a></li>
+<li><a href="#url-dns-與網址剖析">URL 、DNS 與網址剖析</a></li>
+<li><a href="#結語">結語</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-網路程式簡介ip-與-url"><a href="#c-網路程式簡介ip-與-url">C# 網路程式：簡介、IP 與 URL</a></h1>
+<h2 id="簡介"><a href="#簡介">簡介</a></h2>
+<p>最常被使用的網路函式庫稱為 <a href="http://en.wikipedia.org/wiki/Internet_socket">Socket</a>，這個名詞起源於柏克萊大學於 1983 年所釋放出來的 <a href="http://en.wikipedia.org/wiki/Berkeley_sockets">Berkeley Sockets</a> 函式庫，該函式庫將網路視為串流。因而使存取網路的動作，與存取檔案一樣，都可以透過串流機制運行。</p>
+<p>雖然 Socket 函式庫將網路抽像化為串流，但是理解網路的架構對程式的學習仍有很大的幫助，目前我們所使用的 Internet 網路是基於 TCP/IP 的網路架構，要能理解目前的網路程式架構，首先要從 TCP/IP 的架構下手。</p>
+<h3 id="tcpip-網路架構"><a href="#tcpip-網路架構">TCP/IP 網路架構</a></h3>
+<p>網路的 OSI 參考模型將網路的層次分為七層，但是 TCP/IP 架構所依據的 ARPANET DoD 模型則只有四層，兩者之間存在某種對應關係，這個對應關係顯示於下圖當中，能正確的理解該圖，將有助於程式設計師理解網路程式的原理。</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">層次</th>
+<th align="left">OSI</th>
+<th align="left">TCP/IP</th>
+<th align="left">協定範例</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">應用層</td>
+<td align="left">HTTP</td>
+<td align="left">HTTP、SMTP、SNMP、FTP、Telnet、<BR/> SIP、SSH、NFS、RTSP、XMPP、Whois、ENRP</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">表示層</td>
+<td align="left"></td>
+<td align="left">XDR、ASN.1、SMB、AFP、NCP</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">會話層</td>
+<td align="left"></td>
+<td align="left">ASAP、SSH、ISO 8327 / CCITT X.225、<BR/>RPC、NetBIOS、ASP、Winsock、BSD sockets</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">傳輸層</td>
+<td align="left">TCP/UDP</td>
+<td align="left">TCP、UDP、TLS、RTP、SCTP、SPX、ATP、IL</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">網路層</td>
+<td align="left">IP</td>
+<td align="left">IP、ICMP、IGMP、IPX、BGP、OSPF、RIP、<BR/>IGRP、EIGRP、ARP、RARP、 X.25</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">鏈結層</td>
+<td align="left"></td>
+<td align="left">乙太網、令牌環、HDLC、幀中繼、ISDN、<BR/>ATM、IEEE 802.11、FDDI、PPP</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">實體層</td>
+<td align="left"></td>
+<td align="left">線路、無線電、光纖</td>
+</tr>
+</tbody>
+</table>
+<p>舉例而言，當我們使用 TCP 的方式傳輸訊息時，由於 TCP 傳輸層會自動維持封包排列的順序，因此先傳送的封包一定會先到達，這讓程式設計師不需要擔心封包的先後順序問題。但在使用 UDP 傳輸的時候，先傳送的封包可能反而會後到達，因此訊息的順序將無法確保，這種 UDP 傳送方式雖然較快，但是卻較不方便，通常只被使用在強調速度的領域，像是立即影音傳輸的應用上。</p>
+<div class="figure">
+<img src="../img/1000px-IP_stack_connections.svg.png" alt="圖、OSI 與 TCP/IP 的層次對應圖" /><p class="caption">圖、OSI 與 TCP/IP 的層次對應圖</p>
+</div>
+<div class="figure">
+<img src="../img/UDP_encapsulation.svg.png" alt="圖、UDP 的封包" /><p class="caption">圖、UDP 的封包</p>
+</div>
+<h3 id="基於-http-的-web"><a href="#基於-http-的-web">基於 HTTP 的 Web</a></h3>
+<p>HTTP 是 Web 全球資訊網 (萬維網) 的基礎協定，該協定架構在 TCP/IP 架構之上，屬於應用層的協定。構成 HTTP 的主要兩個應用程式是瀏覽器 (Browser) 與網站 (Web Server)。HTTP 是一個典型的 Client-Server (客戶端-伺服端) 架構的協定，使用者透過 Client 端的瀏覽器連結到 Server 的伺服器，然後由伺服端將結果以 HTML 的網頁格式傳回。 HTML 的網頁當中包含了許多超連結 (Hyperlink)，這些超連結連接到某些網址 (URL)，於是使用者可以透過瀏覽器中的超連結，進一步點選其他的網頁，進行網路瀏覽 (衝浪) 的行為。</p>
+<h3 id="socket-函式庫"><a href="#socket-函式庫">Socket 函式庫</a></h3>
+<p>目前大部分的程式語言與平台 (像是 Java, C#, .NET, UNIX, Linux, ....) 都已經支援了 Socket 函式庫。但是由於語言與設計者的不同，這些 Socket 函式庫的使用方式都略有差異。在 C# 最常使用的是微軟 .NET 平台當中 的 Socket 函式庫，這個函式庫相當的成熟，除了將 TCP/IP 封裝成 Socket 函式庫之外，微軟甚至進一步將 HTTP 、加解密、甚至是高階的 Web 服務等機制，都包含在 .NET 平台當中，因此 C# 的程式設計師可以很輕易的寫出網路應用程式。</p>
+<p>Socket 函式庫與 TCP/IP/HTTP 等層級的協定，是學習網路程式的基礎，接下來，我們將會進一步以範例說明網路程式的架構。</p>
+<h2 id="ip-層的程式設計"><a href="#ip-層的程式設計">IP 層的程式設計</a></h2>
+<p>IP 是 TCP/IP 架構當中代表網址的層次，在撰寫 C# 網路程式時，幾乎每個程式都會用到 IP 層的物件，像是 IPAddress，IPEndPoint 等。我們將在本文當中介紹這些物件的使用方式。</p>
+<p>IPAddress 物件代表一個 IP 網址，像是 210.59.154.30 就是一個 IP。在一個大機構當中，由於有自身的內部網路，因此 IP 通常也分為對內與對外兩種。舉例而言，筆者在金門技術學院電腦的內部 IP 是 192.168.60.155，外部 IP 是 210.59.154.30。學校內部的電腦可以透過內部 IP 192.168.60.155 連接到該電腦，但是校外的電腦就只能透過外部 IP 210.59.154.30 連結到該電腦。</p>
+<p>但是，IP 畢竟是不好記的數字，因此就發展出了 DNS (Domain Name Server, 網域名稱伺服器) 機制，用來將文字型的網址對應到數字型的 IP，這個文字型的網址稱為 URL (Universial Resource Locator)。</p>
+<h3 id="操作實驗"><a href="#操作實驗">操作實驗</a></h3>
+<pre><code>C:\Documents and Settings\ccc.CCC-KMIT2&gt;ipconfig /all
+
+Windows IP Configuration
+
+        Host Name . . . . . . . . . . . . : ccc-kmit3
+        Primary Dns Suffix  . . . . . . . :
+        Node Type . . . . . . . . . . . . : Mixed
+        IP Routing Enabled. . . . . . . . : No
+        WINS Proxy Enabled. . . . . . . . : No
+        DNS Suffix Search List. . . . . . : internal
+
+Ethernet adapter 區域連線:
+
+        Connection-specific DNS Suffix  . : internal
+        Description . . . . . . . . . . . : Broadcom NetLink (TM) Gigabit Ethernet
+        Physical Address. . . . . . . . . : 00-01-6C-95-20-52
+        Dhcp Enabled. . . . . . . . . . . : Yes
+        Autoconfiguration Enabled . . . . : Yes
+        IP Address. . . . . . . . . . . . : 192.168.60.155
+        Subnet Mask . . . . . . . . . . . : 255.255.255.0
+        Default Gateway . . . . . . . . . : 192.168.60.254
+        DHCP Server . . . . . . . . . . . : 192.168.1.252
+        DNS Servers . . . . . . . . . . . : 10.10.10.3
+                                            10.10.10.10
+        Primary WINS Server . . . . . . . : 10.10.10.20
+        Lease Obtained. . . . . . . . . . : 2010年3月8日 上午 09:45:01
+        Lease Expires . . . . . . . . . . : 2012年2月6日 上午 09:45:01
+
+C:\Documents and Settings\ccc.CCC-KMIT2&gt;nslookup ccc.kmit.edu.tw
+Server:  ns1.kmit.edu.tw
+Address:  10.10.10.3
+
+Name:    ccc.kmit.edu.tw
+Address:  192.168.60.155
+
+C:\Documents and Settings\ccc.CCC-KMIT2&gt;nslookup tw.yahoo.com
+Server:  ns1.kmit.edu.tw
+Address:  10.10.10.3
+
+Non-authoritative answer:
+Name:    tw-tpe-fo.fyap.b.yahoo.com
+Address:  119.160.246.241
+Aliases:  tw.yahoo.com, tw-cidr.fyap.b.yahoo.com
+
+C:\ccc&gt;nslookup
+Default Server:  ns1.kmit.edu.tw
+Address:  10.10.10.3
+
+&gt; server dns.hinet.net
+Default Server:  dns.hinet.net
+Address:  168.95.1.1
+
+&gt; ccc.kmit.edu.tw
+Server:  dns.hinet.net
+Address:  168.95.1.1
+
+Non-authoritative answer:
+Name:    ccc.kmit.edu.tw
+Address:  203.72.226.32</code></pre>
+<h3 id="ip-層程式範例-1"><a href="#ip-層程式範例-1">IP 層程式範例 1</a></h3>
+<p>範例：建立 IPAddress 與 IPEndPoint。</p>
+<p>檔案： IPAddressTest.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+
+<span class="kw">class</span> IPAddressTest {
+    <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>() {
+        <span class="co">// 建立一個 IP 位址 (IPAddress)。</span>
+        IPAddress ipAddr = IPAddress.<span class="fu">Parse</span>(<span class="st">&quot;210.59.154.30&quot;</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;ipAddr=&quot;</span>+ipAddr);
+
+        <span class="co">// 建立一個 IP 終端 (IPEndPoint = ipAddress + port)。</span>
+        IPEndPoint ipEndPoint = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(ipAddr, <span class="dv">80</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;ipEndPoint=&quot;</span> + ipEndPoint);
+
+        <span class="co">// 將IPEndPoint序列化為SocketAddress</span>
+        SocketAddress socketAddr = ipEndPoint.<span class="fu">Serialize</span>();
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;socketAddr=&quot;</span> + socketAddr);
+    }
+}</code></pre>
+<p>執行結果：</p>
+<pre><code>D:\CSharp&gt;csc IPAddressTest.cs
+Microsoft (R) Visual C# 2008 Compiler version 3.5.30729.1
+for Microsoft (R) .NET Framework version 3.5
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+D:\CSharp&gt;IPAddressTest
+ipAddr=210.59.154.30
+ipEndPoint=210.59.154.30:80
+socketAddr=InterNetwork:16:{0,80,210,59,154,30,0,0,0,0,0,0,0,0}</code></pre>
+<p>範例：取得主機名稱</p>
+<p>檔案：IpToHost.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>.<span class="fu">Sockets</span>;
+
+<span class="kw">class</span> IpToHost
+{
+    <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+    {
+        IPAddress ipAddr = IPAddress.<span class="fu">Parse</span>(args[<span class="dv">0</span>]);
+
+        <span class="co">// 透過DNS找尋IP位址相對應之主機名稱 </span>
+        IPHostEntry remoteHostEntry = Dns.<span class="fu">GetHostEntry</span>(ipAddr);
+
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;host of ip &quot;</span> + ipAddr + <span class="st">&quot; is &quot;</span> + remoteHostEntry.<span class="fu">HostName</span>);
+    }
+}</code></pre>
+<p>執行結果：</p>
+<pre><code>D:\CSharp&gt;csc IpToHost.cs
+Microsoft (R) Visual C# 2008 Compiler version 3.5.30729.1
+for Microsoft (R) .NET Framework version 3.5
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+D:\CSharp&gt;IpToHost 210.59.154.30
+host of ip 210.59.154.30 is 210.59.154.30
+
+D:\CSharp&gt;IpToHost 119.160.246.241
+host of ip 119.160.246.241 is w1.www.vip.tw1.yahoo.com</code></pre>
+<h2 id="url-dns-與網址剖析"><a href="#url-dns-與網址剖析">URL 、DNS 與網址剖析</a></h2>
+<p>範例：使用 DNS 查詢 IP</p>
+<p>檔案：DnsTest.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+
+<span class="kw">class</span> DnsTest
+{
+    <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+    {
+        IPHostEntry hostEntry = Dns.<span class="fu">GetHostEntry</span>(args[<span class="dv">0</span>]);
+
+        <span class="co">// 由於主機有可能有一個以上的 Alias</span>
+        <span class="co">// 因此程式中以迴圈方式判斷 Aliases </span>
+        <span class="dt">string</span>[] aliasList = hostEntry.<span class="fu">Aliases</span>;
+
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt;= aliasList.<span class="fu">Length</span> - <span class="dv">1</span>; i++)
+        {
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Alias &quot;</span>+i+<span class="st">&quot; : &quot;</span>+aliasList[i]);
+        }
+
+        <span class="co">// 由於主機有可能有一個以上的 IP Address</span>
+        <span class="co">// 因此程式中以迴圈方式判斷 AddressList </span>
+        IPAddress[] addrList = hostEntry.<span class="fu">AddressList</span>;
+
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt;= addrList.<span class="fu">Length</span> - <span class="dv">1</span>; i++)
+        {
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Address &quot;</span> + i + <span class="st">&quot; : &quot;</span> + addrList[i]);
+        }
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>D:\CSharp&gt;DnsTest tw.yahoo.com
+Address 0 : 119.160.246.241</code></pre>
+<p>範例：剖析網址 URL</p>
+<p>檔案：UrlParseTest.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+
+<span class="kw">class</span> UrlParseTest
+{
+    <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+    {
+        <span class="co">// 由於 DOS 的命令列會以 &amp; 符號做命令分隔字元，因此、若以指令模式下，網址中的 &amp; 之後會被視為是下一個指令</span>
+        System.<span class="fu">Uri</span> URL = <span class="kw">new</span> System.<span class="fu">Uri</span>(<span class="st">&quot;http://findbook.tw/search?keyword_type=keyword&amp;t=xxx&quot;</span>);
+<span class="co">//        System.Uri URL = new System.Uri(args[0]);</span>
+        <span class="co">// System.Uri類別之屬性</span>
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;AbsolutePath: &quot;</span> + URL.<span class="fu">AbsolutePath</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;AbsoluteUri: &quot;</span> + URL.<span class="fu">AbsoluteUri</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Authority: &quot;</span> + URL.<span class="fu">Authority</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Host: &quot;</span> + URL.<span class="fu">Host</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Port: &quot;</span> + URL.<span class="fu">Port</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;LocalPath: &quot;</span> + URL.<span class="fu">LocalPath</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;IsDefaultPort: &quot;</span> + URL.<span class="fu">IsDefaultPort</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;IsFile: &quot;</span> + URL.<span class="fu">IsFile</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;PathAndQuery: &quot;</span> + URL.<span class="fu">PathAndQuery</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Query: &quot;</span> + URL.<span class="fu">Query</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Scheme: &quot;</span> + URL.<span class="fu">Scheme</span>);
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;UserEscaped: &quot;</span> + URL.<span class="fu">UserEscaped</span>);
+<span class="co">//        Console.WriteLine(&quot;UserInfo: &quot; + URL.UserInfo);</span>
+    }
+}</code></pre>
+<p>執行結果</p>
+<pre><code>C:\ccc&gt;csc UrlParseTest.cs
+Microsoft (R) Visual C# 2008 Compiler version 3.5.30729.1
+for Microsoft (R) .NET Framework version 3.5
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+C:\ccc&gt;UrlParseTest
+AbsolutePath: /search
+AbsoluteUri: http://findbook.tw/search?keyword_type=keyword&amp;t=xxx
+Authority: findbook.tw
+Host: findbook.tw
+Port: 80
+LocalPath: /search
+IsDefaultPort: True
+IsFile: False
+PathAndQuery: /search?keyword_type=keyword&amp;t=xxx
+Query: ?keyword_type=keyword&amp;t=xxx
+Scheme: http
+UserEscaped: False</code></pre>
+<h2 id="結語"><a href="#結語">結語</a></h2>
+<p>微軟 C# 的 IP 層物件主要是 IPAddress 與 IPEndPoint，另外 IPHostEntry可以用來代表 URL，也可以用 Dns.GetHostEntry() 查詢主機名稱。這些是 C# 較常使用的 IP 層物件。</p>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-網路程式http-程式設計-2----client">C# 網路程式：HTTP 程式設計 (2) -- Client</a><ul>
+<li><a href="#http-client-端程式簡介">HTTP Client 端程式簡介</a></li>
+<li><a href="#單一網頁下載">單一網頁下載</a></li>
+<li><a href="#網路爬蟲-webcrawler-的設計">網路爬蟲 WebCrawler 的設計</a></li>
+<li><a href="#browser-的控制">Browser 的控制</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-網路程式http-程式設計-2----client"><a href="#c-網路程式http-程式設計-2----client">C# 網路程式：HTTP 程式設計 (2) -- Client</a></h1>
+<h2 id="http-client-端程式簡介"><a href="#http-client-端程式簡介">HTTP Client 端程式簡介</a></h2>
+<p>在 C# 當中，HTTP Client 端元件的主要物件有 WebClient 與 Browser 元件，其中的 WebClient 物件是一個單純用來下載網頁的程式，這樣的物件可以用來撰寫像 WebCrawler 這樣的搜尋引擎關鍵程式，用來抓取全世界的網頁。</p>
+<p>有時我們需要將整個瀏覽器嵌入到視窗程式中，此時就可以使用 Browser 元件。事實上、Visual C# 當中的 Browser 元件就是 Internet Explorer (IE)，因此您可以很容易的用 Visual C# 做出類似 IE 的功能，並且與其他視窗程式進行互動。</p>
+<h2 id="單一網頁下載"><a href="#單一網頁下載">單一網頁下載</a></h2>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">IO</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+
+<span class="kw">class</span> PageDwnloader
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+    {
+        String text = <span class="fu">fileToText</span>(args[<span class="dv">0</span>]);
+        String[] urls = text.<span class="fu">Split</span>(<span class="ch">&#39;\n&#39;</span>);
+        <span class="kw">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; urls.<span class="fu">Length</span>; i++)
+        {
+         Console.<span class="fu">WriteLine</span>(i + <span class="st">&quot;:&quot;</span> + urls[i]);
+         <span class="fu">UrlToFile</span>(urls[i], i+<span class="st">&quot;.htm&quot;</span>);
+        }
+<span class="co">//   Console.WriteLine(text);</span>
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> String <span class="fu">fileToText</span>(String filePath)
+    {
+        StreamReader file = <span class="kw">new</span> <span class="fu">StreamReader</span>(filePath);
+        String text = file.<span class="fu">ReadToEnd</span>();
+        file.<span class="fu">Close</span>();
+        <span class="kw">return</span> text;
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">UrlToFile</span>(String url, String file) {
+        WebClient webclient = <span class="kw">new</span> <span class="fu">WebClient</span>();
+        webclient.<span class="fu">DownloadFile</span>(<span class="st">&quot;http://&quot;</span>+url, file);
+    }
+}</code></pre>
+<h2 id="網路爬蟲-webcrawler-的設計"><a href="#網路爬蟲-webcrawler-的設計">網路爬蟲 WebCrawler 的設計</a></h2>
+<p>搜尋引擎是網際網路興起後最常被使用的工具之一，其主要技術包含前端的全文檢索與後端的網頁蒐集兩類，本文將介紹搜尋引擎後端的網頁蒐集技術 - 并且以 C# 語言實作一個100行左右的網頁蒐集程式 &quot;網路爬蟲 (Crawler)&quot;, 然後說明其製作方法與原理。</p>
+<p>Google 等搜尋網站的背後，都有一個強大的網頁蒐集程式，可以將全世界的網頁通通抓回去儲存以便提供搜尋之用，這個程式就稱為 &quot;爬行者 (Crawler)&quot;，也有人索性稱為蜘蛛 (Spider)，因為這個就好像在網路上爬來爬去的蜘蛛一樣，到處抓網頁回家放。</p>
+<p>Crawler 的設計原理，簡要來說是透過程式去追蹤網頁上的超連結，然後不斷往外擴張，以便將全世界中曾經被連結到的網頁全部都抓回到來，這也是 Google, Baidu, Bing, Yahoo 等網站背後最重要的程式之一。</p>
+<p>要啟動 Crawler，首先要給一個起始點，以下的範例是利用台灣的 tw.msn.com 網站作為起始點，然後不斷透過「透過連結抓取網頁、取出連結再抓網頁」的方式擴展出去，以下是 Crawler 的核心程式。</p>
+<p>每當抓到新的網頁時，我們繪將其存檔，然後抽取出其中所有的超連結，並將這些超連結放入等待抓取的網址庫中，以便下次可以抓取該網頁。</p>
+<p>檔案：WebCrawler.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">IO</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>.<span class="fu">RegularExpressions</span>;
+
+<span class="kw">class</span> WebCrawler
+{
+<span class="co">//    WebProxy proxy = new WebProxy(&quot;http://proxy.internal:3128/&quot;, true);</span>
+    List&lt;String&gt; urlList = <span class="kw">new</span> List&lt;String&gt;();
+    <span class="co">// Dictionary&lt;String, String&gt; </span>
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+    {
+        WebCrawler crawler = <span class="kw">new</span> <span class="fu">WebCrawler</span>();
+        crawler.<span class="fu">urlList</span>.<span class="fu">Add</span>(<span class="st">&quot;http://tw.msn.com/&quot;</span>);
+        crawler.<span class="fu">craw</span>();
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">craw</span>()
+    {
+        <span class="dt">int</span> urlIdx = <span class="dv">0</span>;
+        <span class="kw">while</span> (urlIdx &lt; urlList.<span class="fu">Count</span>)
+        {
+            <span class="kw">try</span>
+            {
+                String url = urlList[urlIdx];
+                String fileName = <span class="st">&quot;data/&quot;</span> + <span class="fu">toFileName</span>(url);
+                Console.<span class="fu">WriteLine</span>(urlIdx + <span class="st">&quot;:url=&quot;</span> + url + <span class="st">&quot; file=&quot;</span> + fileName);
+                <span class="fu">urlToFile</span>(url, fileName);
+                String html = <span class="fu">fileToText</span>(fileName);
+                <span class="kw">foreach</span> (String childUrl <span class="kw">in</span> <span class="fu">matches</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">shref</span><span class="ch">\\</span><span class="st">s*=</span><span class="ch">\\</span><span class="st">s*</span><span class="ch">\&quot;</span><span class="st">(.*?)</span><span class="ch">\&quot;</span><span class="st">&quot;</span>, html, <span class="dv">1</span>))
+                {
+                    Console.<span class="fu">WriteLine</span>(childUrl);
+                    urlList.<span class="fu">Add</span>(childUrl);
+                }
+            }
+            <span class="kw">catch</span>
+            {
+                Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Error:&quot;</span> + urlList[urlIdx] + <span class="st">&quot; fail!&quot;</span>);
+            }
+            urlIdx++;
+        }
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> IEnumerable <span class="fu">matches</span>(String pPattern, String pText, <span class="dt">int</span> pGroupId)
+    {
+        Regex r = <span class="kw">new</span> <span class="fu">Regex</span>(pPattern, RegexOptions.<span class="fu">IgnoreCase</span> | RegexOptions.<span class="fu">Compiled</span>);
+        <span class="kw">for</span> (Match m = r.<span class="fu">Match</span>(pText); m.<span class="fu">Success</span>; m = m.<span class="fu">NextMatch</span>())
+         <span class="kw">yield</span> <span class="kw">return</span> m.<span class="fu">Groups</span>[pGroupId].<span class="fu">Value</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> String <span class="fu">fileToText</span>(String filePath)
+    {
+        StreamReader file = <span class="kw">new</span> <span class="fu">StreamReader</span>(filePath);
+        String text = file.<span class="fu">ReadToEnd</span>();
+        file.<span class="fu">Close</span>();
+        <span class="kw">return</span> text;
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">urlToFile</span>(String url, String file)
+    {
+        WebClient webclient = <span class="kw">new</span> <span class="fu">WebClient</span>();
+<span class="co">//        webclient.Proxy = proxy;</span>
+        webclient.<span class="fu">DownloadFile</span>(url, file);
+    }
+
+    <span class="kw">public</span> <span class="kw">static</span> String <span class="fu">toFileName</span>(String url)
+    {
+        String fileName = url.<span class="fu">Replace</span>(&#39;?&#39;, &#39;_&#39;);
+        fileName = fileName.<span class="fu">Replace</span>(&#39;/&#39;, &#39;_&#39;);
+        fileName = fileName.<span class="fu">Replace</span>(&#39;&amp;&#39;, &#39;_&#39;);
+        fileName = fileName.<span class="fu">Replace</span>(&#39;:&#39;, &#39;_&#39;);
+        fileName = fileName.<span class="fu">ToLower</span>();
+        <span class="kw">if</span> (!fileName.<span class="fu">EndsWith</span>(<span class="st">&quot;.htm&quot;</span>) &amp;&amp; !fileName.<span class="fu">EndsWith</span>(<span class="st">&quot;.html&quot;</span>))
+         fileName = fileName + <span class="st">&quot;.htm&quot;</span>;
+        <span class="kw">return</span> fileName;
+    }
+}</code></pre>
+<p>以上的 Crawler 是搜尋引擎中的關鍵技術，在本文中我們實作了一個簡單的 Crawler ，這個程式可以用來作為個人抓取網頁個工具程式，作為建立搜尋引擎的基礎。</p>
+<h2 id="browser-的控制"><a href="#browser-的控制">Browser 的控制</a></h2>
+<p>教學錄影： * C# 瀏覽器控制 1/3 -- <a href="http://youtu.be/CIwYabPN7qA">http://youtu.be/CIwYabPN7qA</a> * C# 瀏覽器控制 2/3 -- <a href="http://youtu.be/sJ6cfuL3-ZA">http://youtu.be/sJ6cfuL3-ZA</a> * C# 瀏覽器控制 3/3 -- <a href="http://youtu.be/YThlDxk-E7U">http://youtu.be/YThlDxk-E7U</a></p>
+<p>專案程式下載：<a href="https://dl.dropbox.com/u/101584453/cs/code/WebBrowser.zip">https://dl.dropbox.com/u/101584453/cs/code/WebBrowser.zip</a></p>
+<p>在 C# 當中控制 Internet Explorer (IE) 瀏覽器是一件很簡單的事情，因為 .NET framework 當中已經將 IE 的 WebBrowser 內建成一個控制元件，只要利用這個控制元件中的網址 (Url) 欄位，以及瀏覽 Navigate(url)、向前 GoForward()、向後 GoBack() 等函數，就可以輕鬆的控制瀏覽器元件的行為了。</p>
+<p>檔案：WebBrowser.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">ComponentModel</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> WindowsFormsApplication1
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> Form1 : Form
+    {
+        <span class="kw">public</span> <span class="fu">Form1</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">buttonPrev_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            webBrowser.<span class="fu">GoBack</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">buttonNext_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            webBrowser.<span class="fu">GoForward</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">updateState</span>()
+        {
+            buttonPrev.<span class="fu">Enabled</span> = webBrowser.<span class="fu">CanGoBack</span>;
+            buttonNext.<span class="fu">Enabled</span> = webBrowser.<span class="fu">CanGoForward</span>;
+            <span class="kw">if</span> (webBrowser.<span class="fu">Url</span> != <span class="kw">null</span>)
+                comboBoxUrl.<span class="fu">Text</span> = webBrowser.<span class="fu">Url</span>.<span class="fu">ToString</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">buttonGo_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            webBrowser.<span class="fu">Navigate</span>(comboBoxUrl.<span class="fu">Text</span>);
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">webBrowser_Navigated</span>(<span class="dt">object</span> sender, WebBrowserNavigatedEventArgs e)
+        {
+            <span class="fu">updateState</span>();
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">comboBoxUrl_KeyDown</span>(<span class="dt">object</span> sender, KeyEventArgs e)
+        {
+            <span class="kw">if</span> (e.<span class="fu">KeyCode</span> == Keys.<span class="fu">Enter</span>)
+                webBrowser.<span class="fu">Navigate</span>(comboBoxUrl.<span class="fu">Text</span>);
+        }
+    }
+}</code></pre>
+<p>您可以看到在 Visual C# 當中使用瀏覽器元件事非常容易的事情，這樣的功能可以讓您在應用程裏輕易的嵌入瀏覽器以便讓使用者看到某些網頁，讓 Web 程式的開發變得輕鬆且愉快。</p>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

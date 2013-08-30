@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-視窗程式繪圖功能">C# 視窗程式：繪圖功能</a><ul>
+<li><a href="#畫圖功能示範">畫圖功能示範</a></li>
+<li><a href="#小畫板">小畫板</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-視窗程式繪圖功能"><a href="#c-視窗程式繪圖功能">C# 視窗程式：繪圖功能</a></h1>
+<h2 id="畫圖功能示範"><a href="#畫圖功能示範">畫圖功能示範</a></h2>
+<p>教學錄影：C# 畫圖功能示範 -- <a href="http://youtu.be/8aAql8R4WSg">http://youtu.be/8aAql8R4WSg</a></p>
+<p>專案下載：<a href="https://dl.dropbox.com/u/101584453/cs/code/PaintDemo.zip">https://dl.dropbox.com/u/101584453/cs/code/PaintDemo.zip</a></p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">ComponentModel</span>;
+<span class="kw">using</span> System.<span class="fu">Data</span>;
+<span class="kw">using</span> System.<span class="fu">Drawing</span>;
+<span class="kw">using</span> System.<span class="fu">Linq</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> WindowsFormsApplication1
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> Form1 : Form
+    {
+        Graphics g;
+        Pen pen;
+        Font font;
+        Brush brush;
+
+        <span class="kw">public</span> <span class="fu">Form1</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+
+            g = <span class="kw">this</span>.<span class="fu">CreateGraphics</span>();
+            pen = <span class="kw">new</span> <span class="fu">Pen</span>(Color.<span class="fu">Black</span>, <span class="dv">3</span>);
+            font = <span class="kw">new</span> <span class="fu">Font</span>(<span class="st">&quot;標楷體&quot;</span>, <span class="dv">16</span>);
+            brush = <span class="kw">new</span> <span class="fu">SolidBrush</span>(Color.<span class="fu">Black</span>);
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Form1_Paint</span>(<span class="dt">object</span> sender, PaintEventArgs e)
+        {
+            g.<span class="fu">DrawLine</span>(pen, <span class="kw">new</span> <span class="fu">Point</span>(<span class="dv">1</span>, <span class="dv">1</span>), <span class="kw">new</span> <span class="fu">Point</span>(<span class="dv">300</span>, <span class="dv">100</span>));
+            g.<span class="fu">DrawLine</span>(pen, <span class="kw">new</span> <span class="fu">Point</span>(<span class="dv">100</span>, <span class="dv">1</span>), <span class="kw">new</span> <span class="fu">Point</span>(<span class="dv">300</span>, <span class="dv">100</span>));
+            g.<span class="fu">DrawRectangle</span>(pen, <span class="kw">new</span> <span class="fu">Rectangle</span>(<span class="dv">50</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">100</span>));
+
+            g.<span class="fu">DrawString</span>(<span class="st">&quot;Hello! 你好！&quot;</span>, font, brush, <span class="kw">new</span> <span class="fu">PointF</span>(<span class="fl">150.</span>0F, <span class="fl">150.</span>0F));
+
+            Image image = Image.<span class="fu">FromFile</span>(<span class="st">&quot;../../ccc.jpg&quot;</span>);
+            g.<span class="fu">DrawImage</span>(image, <span class="kw">new</span> <span class="fu">Point</span>(<span class="dv">200</span>, <span class="dv">200</span>));
+        }
+    }
+}</code></pre>
+<h2 id="小畫板"><a href="#小畫板">小畫板</a></h2>
+<p>教學錄影： * C# 小畫板 (2) -- <a href="http://youtu.be/HkOkWRQ_Ad4">http://youtu.be/HkOkWRQ_Ad4</a> * C# 小畫板 (3) -- <a href="http://youtu.be/VXaQu_yYu08">http://youtu.be/VXaQu_yYu08</a></p>
+<p>專案下載：<a href="https://dl.dropbox.com/u/101584453/cs/code/Painter.zip">https://dl.dropbox.com/u/101584453/cs/code/Painter.zip</a></p>
+<div class="figure">
+<img src="../img/Painter.png" alt="小畫板執行畫面" /><p class="caption">小畫板執行畫面</p>
+</div>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Drawing</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> Painter
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> Form1 : Form
+    {
+        Graphics g;                 <span class="co">// 繪圖區</span>
+        Pen pen;                    <span class="co">// 畫筆</span>
+        <span class="dt">bool</span> isMouseDown = <span class="kw">false</span>;   <span class="co">// 紀錄滑鼠是否被按下</span>
+        List&lt;Point&gt; points = <span class="kw">new</span> List&lt;Point&gt;(); <span class="co">// 紀錄滑鼠軌跡的陣列。</span>
+
+        <span class="kw">public</span> <span class="fu">Form1</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+
+            g = <span class="kw">this</span>.<span class="fu">CreateGraphics</span>(); <span class="co">// 取得繪圖區物件</span>
+            pen = <span class="kw">new</span> <span class="fu">Pen</span>(Color.<span class="fu">Black</span>, <span class="dv">3</span>); <span class="co">// 設定畫筆為黑色、粗細為 3 點。</span>
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Form1_MouseDown</span>(<span class="dt">object</span> sender, MouseEventArgs e)
+        {
+            isMouseDown = <span class="kw">true</span>; <span class="co">// 滑鼠被按下後設定旗標值。</span>
+            points.<span class="fu">Add</span>(e.<span class="fu">Location</span>); <span class="co">// 將點加入到 points 陣列當中。</span>
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Form1_MouseMove</span>(<span class="dt">object</span> sender, MouseEventArgs e)
+        {
+            <span class="kw">if</span> (isMouseDown) <span class="co">// 如果滑鼠被按下</span>
+            {
+                points.<span class="fu">Add</span>(e.<span class="fu">Location</span>); <span class="co">// 將點加入到 points 陣列當中。</span>
+                <span class="co">// 畫出上一點到此點的線段。</span>
+                g.<span class="fu">DrawLine</span>(pen, points[points.<span class="fu">Count</span> - <span class="dv">2</span>], points[points.<span class="fu">Count</span> - <span class="dv">1</span>]);
+            }
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">Form1_MouseUp</span>(<span class="dt">object</span> sender, MouseEventArgs e)
+        {
+            points.<span class="fu">Add</span>(<span class="kw">new</span> <span class="fu">Point</span>(-<span class="dv">1</span>, -<span class="dv">1</span>)); <span class="co">// 滑鼠放開時，插入一個斷點 (-1,-1)，以代表前後兩點之間有斷開。</span>
+            isMouseDown = <span class="kw">false</span>; <span class="co">// 滑鼠已經沒有被按下了。</span>
+        }
+    }
+}</code></pre>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

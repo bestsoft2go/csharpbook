@@ -1,0 +1,718 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-網路程式tcp-程式設計">C# 網路程式：TCP 程式設計</a><ul>
+<li><a href="#tcp-簡介">TCP 簡介</a></li>
+<li><a href="#tcp-的程式架構">TCP 的程式架構</a></li>
+<li><a href="#tcp-單向的訊息傳遞程式">TCP 單向的訊息傳遞程式</a></li>
+<li><a href="#tcp-雙向聊天程式">TCP 雙向聊天程式</a></li>
+<li><a href="#tcp-多人聊天室-視窗版">TCP 多人聊天室 (視窗版)</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-網路程式tcp-程式設計"><a href="#c-網路程式tcp-程式設計">C# 網路程式：TCP 程式設計</a></h1>
+<h2 id="tcp-簡介"><a href="#tcp-簡介">TCP 簡介</a></h2>
+<p>TCP 是一個連線導向的網路傳輸協定，程式通常在斷線之前會一直記住這個連線。在我們使用 Socket 函式庫設計 TCP 網路程式時，通常會讓一個 Thread 負責處理一條連線，這樣可以讓問題變得較為單純，因為不需要用表格去記住連線。</p>
+<p>所以，在學習 TCP 程式設計之前，我們有必要先複習一下 Thread (台灣稱為執行緒、中國大陸稱為線程) 的程式設計方式，若讀者對 Thread 尚不熟悉，請先閱讀本書的 Thread 章節。</p>
+<h2 id="tcp-的程式架構"><a href="#tcp-的程式架構">TCP 的程式架構</a></h2>
+<p>TCP 客戶端的通常在連上伺服端後，就會用一個迴圈透過 Socket.send 函數傳送訊息，以下是一個典型的 TCP 客戶端程式。</p>
+<p>客戶端：Client</p>
+<pre class="sourceCode CS"><code class="sourceCode cs">        IPEndPoint ip = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Parse</span>(address), port);
+        Socket server = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+        server.<span class="fu">Connect</span>(ip);
+        ...
+        <span class="kw">while</span>(<span class="kw">true</span>) {
+            ...
+            server.<span class="fu">Send</span>(data);
+            ...
+        }
+        ...
+        server.<span class="fu">Shutdown</span>(SocketShutdown.<span class="fu">Both</span>);
+        server.<span class="fu">Close</span>();</code></pre>
+<p>TCP 伺服端通常較為複雜，首先在利用 Socket 中的 bind() 函數佔用特定的 port 之後，會再進入一個無窮迴圈，在迴圈中利用 socket.Accept() 接受客戶端的連線，此時會產生一個新的 Socket 物件。通常，我們會建立一個新的 Thread 去處理這個連線，因此在下列程式中，我們建立了 TcpListener 這個物件，以便讓一個 Listener 處理一個 Socket 連線。</p>
+<p>伺服端：Server</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">public</span> <span class="kw">class</span> TcpServer
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>()
+    {
+        IPEndPoint ip = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Any</span>, port);
+        Socket socket = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+        socket.<span class="fu">Bind</span>(ip);
+        socket.<span class="fu">Listen</span>(<span class="dv">10</span>);
+        <span class="kw">while</span>(<span class="kw">true</span>)
+        {
+            Socket client = socket.<span class="fu">Accept</span>();
+            TcpListener listener = <span class="kw">new</span> <span class="fu">TcpListener</span>(client); <span class="co">// 建立 Listener 物件處理這個連線。</span>
+            Thread thread = <span class="kw">new</span> <span class="fu">Thread</span>(<span class="kw">new</span> <span class="fu">ThreadStart</span>(listener.<span class="fu">run</span>)); <span class="co">// 建立 listener.run 的 Thread。</span>
+            thread.<span class="fu">Start</span>(); <span class="co">// 啟動 Thread</span>
+            ...
+        }
+         ...
+    }
+}
+
+<span class="kw">public</span> <span class="kw">class</span> TcpListener {
+    Socket socket;
+
+    <span class="kw">public</span> <span class="fu">TcpListener</span>(Socket s)  { socket = s; }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() { <span class="co">// Thread 的主要函數</span>
+        <span class="kw">while</span> (<span class="kw">true</span>)  {
+            ...
+            <span class="dt">byte</span>[] data = <span class="kw">new</span> <span class="dt">byte</span>[<span class="dv">1024</span>];
+            <span class="dt">int</span> recv = socket.<span class="fu">Receive</span>(data); <span class="co">// 接收資料</span>
+            ...
+        }
+        socket.<span class="fu">Close</span>();
+    }
+}</code></pre>
+<p>以上就是一個典型的 TCP 程式架構，該架構包含了『客戶端-伺服端』兩個部分，客戶端透過 Socket.send 傳送訊息，而伺服端則會針對每一個連線，建立新的 Thread ，以便處理連線的互動關係。這種架構對 TCP 而言是較為簡單的，有幾個連線就建立幾個 Thread。由於這種架構不需要用表格記住連線，因此簡化了伺服端的管理，讓程式設計更為容易。</p>
+<p>在理解了這個架構後，讓我們來看看幾個真實的程式範例：</p>
+<h2 id="tcp-單向的訊息傳遞程式"><a href="#tcp-單向的訊息傳遞程式">TCP 單向的訊息傳遞程式</a></h2>
+<p>由於網路程式必須有連線，因此至少要有兩個程式才能運作，通常主動連線的一方稱為 Client，被動等待連線的一方稱為 Server，這就是所謂的 Client - Server 架構。</p>
+<p>在本範例中，我們撰寫了一個 TcpClient 與一個 TcpServer 程式，TcpClient 連線到 TcpServer 之後，會將使用者所輸入的文字傳司送給 TcpServer。當 TcpServer 收到這些文字之後會印出在螢幕上，這個範例示範了一個極為簡單的網路程式架構。</p>
+<p>檔案：TcpClient1.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>.<span class="fu">Sockets</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+
+<span class="kw">public</span> <span class="kw">class</span> TcpClient
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+    {
+        IPEndPoint ipep = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Parse</span>(args[<span class="dv">0</span>]), <span class="dv">20</span>);
+
+        Socket server = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+        server.<span class="fu">Connect</span>(ipep);
+
+        <span class="kw">while</span>(<span class="kw">true</span>)
+        {
+         <span class="dt">string</span> input = Console.<span class="fu">ReadLine</span>();
+         <span class="kw">if</span> (input == <span class="st">&quot;exit&quot;</span>)
+         <span class="kw">break</span>;
+         <span class="dt">byte</span>[] data = Encoding.<span class="fu">UTF8</span>.<span class="fu">GetBytes</span>(input);
+<span class="co">//   byte[] data = Encoding.ASCII.GetBytes(input);</span>
+         server.<span class="fu">Send</span>(data);
+        }
+        Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Disconnecting from server...&quot;</span>);
+        server.<span class="fu">Shutdown</span>(SocketShutdown.<span class="fu">Both</span>);
+        server.<span class="fu">Close</span>();
+    }
+}</code></pre>
+<p>檔案：TcpServer1.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>.<span class="fu">Sockets</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Threading</span>;
+
+<span class="kw">public</span> <span class="kw">class</span> TcpServer
+{
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>()
+    {
+        IPEndPoint ipep = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Any</span>, <span class="dv">20</span>);
+
+        Socket newsock = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+
+        newsock.<span class="fu">Bind</span>(ipep);
+        newsock.<span class="fu">Listen</span>(<span class="dv">10</span>);
+
+        <span class="kw">while</span>(<span class="kw">true</span>)
+        {
+         Socket client = newsock.<span class="fu">Accept</span>();
+         IPEndPoint clientep = (IPEndPoint) client.<span class="fu">RemoteEndPoint</span>;
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Client End Point = &quot;</span> + clientep);
+         <span class="co">// create a new thread and then receive message.</span>
+         TcpListener listener = <span class="kw">new</span> <span class="fu">TcpListener</span>(client);
+         Thread thread = <span class="kw">new</span> <span class="fu">Thread</span>(<span class="kw">new</span> <span class="fu">ThreadStart</span>(listener.<span class="fu">run</span>));
+         thread.<span class="fu">Start</span>();
+        }
+<span class="co">//     newsock.Close();</span>
+    }
+}
+
+<span class="kw">public</span> <span class="kw">class</span> TcpListener {
+    Socket socket;
+
+    <span class="kw">public</span> <span class="fu">TcpListener</span>(Socket s)
+    {
+        socket = s;
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>() 
+    {
+        <span class="kw">try</span> {
+          <span class="kw">while</span> (<span class="kw">true</span>) 
+          {
+            <span class="dt">byte</span>[] data = <span class="kw">new</span> <span class="dt">byte</span>[<span class="dv">1024</span>];
+            <span class="dt">int</span> recv = socket.<span class="fu">Receive</span>(data);
+            <span class="kw">if</span> (recv == <span class="dv">0</span>) <span class="kw">break</span>;
+            Console.<span class="fu">WriteLine</span>(Encoding.<span class="fu">UTF8</span>.<span class="fu">GetString</span>(data, <span class="dv">0</span>, recv));
+          }
+          socket.<span class="fu">Close</span>();
+        } <span class="kw">catch</span> (Exception e) {
+          Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Client &quot;</span>+socket.<span class="fu">RemoteEndPoint</span>+<span class="st">&quot; Error : close&quot;</span>);
+          Console.<span class="fu">WriteLine</span>(e);
+        }
+    }
+}</code></pre>
+<p>上述程式的執行結果如下所示：</p>
+<p><a href="../img/TcpMessage1way.jpg"></a></p>
+<h2 id="tcp-雙向聊天程式"><a href="#tcp-雙向聊天程式">TCP 雙向聊天程式</a></h2>
+<p>聊天程式是學習網路程式設計很好的入門題目之一，在本文中，我們將示範如何用 C# 的 Socket 函式庫設計一個網路聊天程式。以下是這個程式的執行時的一個畫面，讀者可以看到我們在兩個命令列視窗中執行同一個 ChatBox 程式，左上角是 Server 程式，右下角是 Client 程式。</p>
+<div class="figure">
+<img src="../img/ChatBox.jpg" alt="聊天程式的執行畫面" /><p class="caption">聊天程式的執行畫面</p>
+</div>
+<p>在上圖中，Client 可以傳送訊息給 Server ，而 Server 也可傳送訊息給 Client，由於雙方在這個傳送接收的動作上幾乎是相同的，因此在寫程式時就將這些動作封裝後共用，可以讓程式更為精簡，這就是 P2P 架構的程式。</p>
+<p>當然，這個程式也可以放在兩台不同的電腦上執行，其結果將與上述結果類似，只是無法同時在一台電腦上看到輸入與輸出的結果而已。</p>
+<p>以下是上述雙向聊天程式 ChatBox 的原始程式碼，其中的 TcpListener 程式是 Client-Server 雙方所共用的部分，因此獨立出來變成一個類別，並且分別在 Client 與 Server 主程式當中都用 new TcpListener() 的方式呼叫。此時雙方都會建立一個寫入迴圈 (outLoop) 與讀取回圈 (inLoop)，寫入迴圈不斷等待鍵盤的輸入，並在有輸入時將訊息傳遞給對方。而讀取回圈則是不斷接收對方所傳來的訊息並顯示在螢幕上。</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>.<span class="fu">Sockets</span>;
+<span class="kw">using</span> System.<span class="fu">IO</span>;
+<span class="kw">using</span> System.<span class="fu">Threading</span>;
+
+<span class="kw">class</span> ChatBox
+{
+    <span class="dt">int</span> port = <span class="dv">20</span>;
+
+    <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+    {
+        ChatBox chatBox = <span class="kw">new</span> <span class="fu">ChatBox</span>();
+        <span class="kw">if</span> (args.<span class="fu">Length</span> == <span class="dv">0</span>)
+         chatBox.<span class="fu">ServerMain</span>();
+        <span class="kw">else</span>
+         chatBox.<span class="fu">ClientMain</span>(args[<span class="dv">0</span>]);
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">ServerMain</span>()
+    {
+        IPEndPoint ipep = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Any</span>, port);
+        Socket newsock = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+        newsock.<span class="fu">Bind</span>(ipep);
+        newsock.<span class="fu">Listen</span>(<span class="dv">10</span>);
+        Socket client = newsock.<span class="fu">Accept</span>();
+        <span class="kw">new</span> <span class="fu">TcpListener</span>(client); <span class="co">// create a new thread and then receive message.</span>
+        newsock.<span class="fu">Close</span>();
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">ClientMain</span>(String ip)
+    {
+        IPEndPoint ipep = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Parse</span>(ip), port);
+        Socket server = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+        server.<span class="fu">Connect</span>(ipep);
+        <span class="kw">new</span> <span class="fu">TcpListener</span>(server);
+        server.<span class="fu">Shutdown</span>(SocketShutdown.<span class="fu">Both</span>);
+        server.<span class="fu">Close</span>();
+    }
+
+}
+
+<span class="kw">public</span> <span class="kw">class</span> TcpListener
+{
+    Socket socket;
+    Thread inThread, outThread;
+    NetworkStream stream;
+    StreamReader reader;
+    StreamWriter writer;
+
+    <span class="kw">public</span> <span class="fu">TcpListener</span>(Socket s)
+    {
+        socket = s;
+        stream = <span class="kw">new</span> <span class="fu">NetworkStream</span>(s);
+        reader = <span class="kw">new</span> <span class="fu">StreamReader</span>(stream);
+        writer = <span class="kw">new</span> <span class="fu">StreamWriter</span>(stream);
+        inThread = <span class="kw">new</span> <span class="fu">Thread</span>(<span class="kw">new</span> <span class="fu">ThreadStart</span>(inLoop));
+        inThread.<span class="fu">Start</span>();
+        outThread = <span class="kw">new</span> <span class="fu">Thread</span>(<span class="kw">new</span> <span class="fu">ThreadStart</span>(outLoop));
+        outThread.<span class="fu">Start</span>();
+        inThread.<span class="fu">Join</span>(); <span class="co">// 等待 inThread 執行續完成，才離開此函數。 </span>
+        <span class="co">// (注意、按照 inLoop 的邏輯，這個函數永遠不會跳出，因為 inLoop 是個無窮迴圈)。</span>
+    } 
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">inLoop</span>()
+    {
+        <span class="kw">while</span> (<span class="kw">true</span>)
+        {
+         String line = reader.<span class="fu">ReadLine</span>();
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;收到：&quot;</span> + line);
+        }
+    }
+
+    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">outLoop</span>()
+    {
+        <span class="kw">while</span> (<span class="kw">true</span>)
+        {
+         String line = Console.<span class="fu">ReadLine</span>();
+         writer.<span class="fu">WriteLine</span>(line);
+         writer.<span class="fu">Flush</span>();
+        }
+    }
+}</code></pre>
+<h2 id="tcp-多人聊天室-視窗版"><a href="#tcp-多人聊天室-視窗版">TCP 多人聊天室 (視窗版)</a></h2>
+<p>專案程式下載：<a href="https://dl.dropbox.com/u/101584453/cs/code/ChattingRoom.zip">https://dl.dropbox.com/u/101584453/cs/code/ChattingRoom.zip</a></p>
+<p>使用方法</p>
+<pre><code>// ---------------------------------------------------------------
+// 共有四個程式檔案
+//
+//  程式檔 : ChatLib.cs
+//  程式檔 : ChattingServer.cs
+//  程式檔 : FormChatClient.cs
+//  程式檔 : FormChatClient.Designer.cs
+//
+// 編譯方式 : 
+//    步驟 1 : csc ChatServer.cs ChatLib.cs
+//             會產生 ChattingServer.exe 檔
+//
+//    步驟 2 : csc WinChatClient.cs FormChatClient.cs FormChatClilent.Designer.cs ChatLib.cs
+//             會產生 WinChatClient.exe 檔
+//     
+// 執行方式 : 
+//    步驟 1 : 執行 ChatServer.exe
+//    步驟 2 : 執行 WinChatClient.exe (使用者 1)
+//    步驟 3 : 執行 WinChatClient.exe (使用者 2)
+//
+// 如此，兩個 WinChatClient.exe 的視窗間即可透過本機聊天
+// ---------------------------------------------------------------</code></pre>
+<p>檔案：ChatLib.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="co">// ------------------------- ChatLib.cs --------------------------</span>
+<span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>.<span class="fu">Sockets</span>;
+<span class="kw">using</span> System.<span class="fu">IO</span>;
+<span class="kw">using</span> System.<span class="fu">Threading</span>;
+
+<span class="kw">namespace</span> ChattingRoom
+{
+    <span class="kw">public</span> <span class="kw">class</span> ChatSetting
+    {
+        <span class="kw">public</span> <span class="kw">static</span> String serverIp = <span class="st">&quot;192.168.100.172&quot;</span>;
+        <span class="kw">public</span> <span class="kw">static</span> <span class="dt">int</span> port = <span class="dv">3766</span>;
+    }
+
+    <span class="kw">public</span> <span class="kw">delegate</span> String <span class="fu">StrHandler</span>(String str);
+
+    <span class="kw">public</span> <span class="kw">class</span> ChatSocket
+    {
+        <span class="kw">public</span> Socket socket;
+        <span class="kw">public</span> NetworkStream stream;
+        <span class="kw">public</span> StreamReader reader;
+        <span class="kw">public</span> StreamWriter writer;
+        <span class="kw">public</span> StrHandler inHandler;
+        <span class="kw">public</span> EndPoint remoteEndPoint;
+        <span class="kw">public</span> <span class="dt">bool</span> isDead = <span class="kw">false</span>;
+
+        <span class="kw">public</span> <span class="fu">ChatSocket</span>(Socket s)
+        {
+            socket = s;
+            stream = <span class="kw">new</span> <span class="fu">NetworkStream</span>(s);
+            reader = <span class="kw">new</span> <span class="fu">StreamReader</span>(stream);
+            writer = <span class="kw">new</span> <span class="fu">StreamWriter</span>(stream);
+            remoteEndPoint = socket.<span class="fu">RemoteEndPoint</span>;
+        }
+
+        <span class="kw">public</span> String <span class="fu">receive</span>()
+        {
+            <span class="kw">return</span> reader.<span class="fu">ReadLine</span>();
+        }
+
+        <span class="kw">public</span> ChatSocket <span class="fu">send</span>(String line)
+        {
+            writer.<span class="fu">WriteLine</span>(line);
+            writer.<span class="fu">Flush</span>();
+            <span class="kw">return</span> <span class="kw">this</span>;
+        }
+
+        <span class="kw">public</span> <span class="kw">static</span> ChatSocket <span class="fu">connect</span>(String ip)
+        {
+            IPEndPoint ipep = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Parse</span>(ip), ChatSetting.<span class="fu">port</span>);
+
+            Socket socket = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+            socket.<span class="fu">Connect</span>(ipep);
+            <span class="kw">return</span> <span class="kw">new</span> <span class="fu">ChatSocket</span>(socket);
+        }
+
+        <span class="kw">public</span> Thread <span class="fu">newListener</span>(StrHandler pHandler)
+        {
+            inHandler = pHandler;
+
+            Thread listenThread = <span class="kw">new</span> <span class="fu">Thread</span>(<span class="kw">new</span> <span class="fu">ThreadStart</span>(listen));
+            listenThread.<span class="fu">Start</span>();
+            <span class="kw">return</span> listenThread;
+        }
+
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">listen</span>()
+        {
+            <span class="kw">try</span>
+            {
+                <span class="kw">while</span> (<span class="kw">true</span>)
+                {
+                    String line = <span class="fu">receive</span>();
+                    <span class="fu">inHandler</span>(line);
+                }
+            }
+            <span class="kw">catch</span> (Exception ex)
+            {
+                isDead = <span class="kw">true</span>;
+                Console.<span class="fu">WriteLine</span>(ex.<span class="fu">Message</span>);
+            }
+        }
+    }
+}</code></pre>
+<p>檔案：ChattingServer.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="co">// ------------------------- ChatServer.cs -------------------</span>
+<span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Net</span>;
+<span class="kw">using</span> System.<span class="fu">Net</span>.<span class="fu">Sockets</span>;
+<span class="kw">using</span> System.<span class="fu">IO</span>;
+<span class="kw">using</span> System.<span class="fu">Threading</span>;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+
+<span class="kw">namespace</span> ChattingRoom
+{
+    <span class="kw">public</span> <span class="kw">class</span> ChatServer
+    {
+        List&lt;ChatSocket&gt; clientList = <span class="kw">new</span> List&lt;ChatSocket&gt;();
+
+        <span class="kw">public</span> <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(String[] args)
+        {
+            ChatServer chatServer = <span class="kw">new</span> <span class="fu">ChatServer</span>();
+            chatServer.<span class="fu">run</span>();
+        }
+
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span>()
+        {
+            IPEndPoint ipep = <span class="kw">new</span> <span class="fu">IPEndPoint</span>(IPAddress.<span class="fu">Any</span>, ChatSetting.<span class="fu">port</span>);
+
+            Socket newsock = <span class="kw">new</span> <span class="fu">Socket</span>(AddressFamily.<span class="fu">InterNetwork</span>, SocketType.<span class="fu">Stream</span>, ProtocolType.<span class="fu">Tcp</span>);
+
+            newsock.<span class="fu">Bind</span>(ipep);
+            newsock.<span class="fu">Listen</span>(<span class="dv">10</span>);
+
+            <span class="kw">while</span> (<span class="kw">true</span>)
+            {
+                Socket socket = newsock.<span class="fu">Accept</span>();
+                Console.<span class="fu">WriteLine</span>(<span class="st">&quot;接受一個新連線!&quot;</span>);
+                ChatSocket client = <span class="kw">new</span> <span class="fu">ChatSocket</span>(socket);
+                <span class="kw">try</span>
+                {
+                    clientList.<span class="fu">Add</span>(client);
+                    client.<span class="fu">newListener</span>(processMsgComeIn);
+                }
+                <span class="kw">catch</span>
+                {
+                }
+<span class="co">//                clientList.Remove(client);</span>
+            }
+            <span class="co">//    newsock.Close();</span>
+        }
+
+        <span class="kw">public</span> String <span class="fu">processMsgComeIn</span>(String msg)
+        {
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;收到訊息：&quot;</span>+msg);
+            <span class="fu">broadCast</span>(msg);
+            <span class="kw">return</span> <span class="st">&quot;OK&quot;</span>;
+        }
+
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">broadCast</span>(String msg)
+        {
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;廣播訊息給 &quot;</span> + msg+<span class="st">&quot; 線上使用者共&quot;</span>+clientList.<span class="fu">Count</span>+<span class="st">&quot;個人!&quot;</span>);
+            <span class="kw">foreach</span> (ChatSocket client <span class="kw">in</span> clientList)
+            {
+         <span class="kw">if</span> (!client.<span class="fu">isDead</span>) {
+         Console.<span class="fu">WriteLine</span>(<span class="st">&quot;Send to &quot;</span>+client.<span class="fu">remoteEndPoint</span>.<span class="fu">ToString</span>()+<span class="st">&quot;:&quot;</span>+msg);
+         client.<span class="fu">send</span>(msg);
+         }
+            }
+        }
+    }
+}</code></pre>
+<p>檔案：FormChatClient.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="co">// ------------------------- FormChatClient.cs -------------------</span>
+<span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">ComponentModel</span>;
+<span class="kw">using</span> System.<span class="fu">Data</span>;
+<span class="kw">using</span> System.<span class="fu">Drawing</span>;
+<span class="kw">using</span> System.<span class="fu">Text</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> ChattingRoom
+{
+    <span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> FormChatClient : Form
+    {
+        ChatSocket client;
+        StrHandler msgHandler;
+
+        <span class="kw">public</span> <span class="fu">FormChatClient</span>()
+        {
+            <span class="fu">InitializeComponent</span>();
+
+            msgHandler = <span class="kw">this</span>.<span class="fu">addMsg</span>;
+        }
+
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">buttonSend_Click</span>(<span class="dt">object</span> sender, EventArgs e)
+        {
+            <span class="fu">sendMsg</span>();
+        }
+        
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">textBoxMsg_KeyPress</span>(<span class="dt">object</span> sender, KeyPressEventArgs e)
+        {
+         <span class="kw">if</span> (e.<span class="fu">KeyChar</span> == <span class="ch">&#39;\r&#39;</span>)
+         <span class="fu">sendMsg</span>();
+        }
+
+        <span class="kw">public</span> String <span class="fu">user</span>() {
+            <span class="kw">return</span> textBoxUser.<span class="fu">Text</span>.<span class="fu">Trim</span>();
+        }
+
+        <span class="kw">public</span> String <span class="fu">msg</span>() {
+            <span class="kw">return</span> textBoxMsg.<span class="fu">Text</span>;
+        }
+
+        <span class="kw">public</span> <span class="dt">void</span> <span class="fu">sendMsg</span>()
+        {
+            <span class="kw">if</span> (<span class="fu">user</span>().<span class="fu">Length</span> == <span class="dv">0</span>)
+            {
+                MessageBox.<span class="fu">Show</span>(<span class="st">&quot;請輸入使用者名稱!&quot;</span>);
+                <span class="kw">return</span>;
+            }
+            <span class="kw">if</span> (client == <span class="kw">null</span>) {
+                client = ChatSocket.<span class="fu">connect</span>(ChatSetting.<span class="fu">serverIp</span>);
+                client.<span class="fu">newListener</span>(processMsgComeIn);
+                client.<span class="fu">send</span>(<span class="fu">user</span>() + <span class="st">&quot; : 新使用者進入!&quot;</span>);
+                textBoxUser.<span class="fu">Enabled</span> = <span class="kw">false</span>;
+            }
+            <span class="kw">if</span> (<span class="fu">msg</span>().<span class="fu">Length</span> &gt; <span class="dv">0</span>) {
+                client.<span class="fu">send</span>(<span class="fu">user</span>()+<span class="st">&quot; : &quot;</span>+<span class="fu">msg</span>());
+         textBoxMsg.<span class="fu">Text</span> = <span class="st">&quot;&quot;</span>;
+         }
+        }
+
+        <span class="kw">public</span> String <span class="fu">processMsgComeIn</span>(String msg)
+        {
+            <span class="kw">this</span>.<span class="fu">Invoke</span>(msgHandler, <span class="kw">new</span> Object[] { msg });
+            <span class="kw">return</span> <span class="st">&quot;OK&quot;</span>;
+        }
+
+        <span class="kw">public</span> String <span class="fu">addMsg</span>(String msg)
+        {
+            richTextBoxBoard.<span class="fu">AppendText</span>(msg + <span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>);
+            <span class="kw">return</span> <span class="st">&quot;OK&quot;</span>;
+        }
+    }
+}</code></pre>
+<p>檔案：FormChatClient.Designer.cs</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="co">// ------------------------- FormChatClient.Designer.cs ----------</span>
+<span class="kw">namespace</span> ChattingRoom
+{
+    <span class="kw">partial</span> <span class="kw">class</span> FormChatClient
+    {
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// 設計工具所需的變數。</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="kw">private</span> System.<span class="fu">ComponentModel</span>.<span class="fu">IContainer</span> components = <span class="kw">null</span>;
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// 清除任何使用中的資源。</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="co">/// </span><span class="kw">&lt;param</span><span class="ot"> name=</span><span class="dt">&quot;disposing&quot;</span><span class="kw">&gt;</span><span class="co">如果應該公開 Managed 資源則為 true，否則為 false。</span><span class="kw">&lt;/param&gt;</span>
+        <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">Dispose</span>(<span class="dt">bool</span> disposing)
+        {
+            <span class="kw">if</span> (disposing &amp;&amp; (components != <span class="kw">null</span>))
+            {
+                components.<span class="fu">Dispose</span>();
+            }
+            <span class="kw">base</span>.<span class="fu">Dispose</span>(disposing);
+        }
+
+        <span class="dv">#region Windows Form 設計工具產生的程式碼</span>
+
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// 此為設計工具支援所需的方法 - 請勿使用程式碼編輯器修改這個方法的內容。</span>
+        <span class="co">///</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        <span class="kw">private</span> <span class="dt">void</span> <span class="fu">InitializeComponent</span>()
+        {
+            <span class="kw">this</span>.<span class="fu">panelInput</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Panel</span>();
+            <span class="kw">this</span>.<span class="fu">labelSaid</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Label</span>();
+            <span class="kw">this</span>.<span class="fu">textBoxUser</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">TextBox</span>();
+            <span class="kw">this</span>.<span class="fu">textBoxMsg</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">TextBox</span>();
+            <span class="kw">this</span>.<span class="fu">buttonSend</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Button</span>();
+            <span class="kw">this</span>.<span class="fu">panelPadding1</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Panel</span>();
+            <span class="kw">this</span>.<span class="fu">panelMsg</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Panel</span>();
+            <span class="kw">this</span>.<span class="fu">richTextBoxBoard</span> = <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">RichTextBox</span>();
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">SuspendLayout</span>();
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">SuspendLayout</span>();
+            <span class="kw">this</span>.<span class="fu">SuspendLayout</span>();
+            <span class="co">// </span>
+            <span class="co">// panelInput</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">labelSaid</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">textBoxUser</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">textBoxMsg</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">buttonSend</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">panelPadding1</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Dock</span> = System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">DockStyle</span>.<span class="fu">Bottom</span>;
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">0</span>, <span class="dv">283</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Name</span> = <span class="st">&quot;panelInput&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">494</span>, <span class="dv">64</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">TabIndex</span> = <span class="dv">0</span>;
+            <span class="co">// </span>
+            <span class="co">// labelSaid</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">labelSaid</span>.<span class="fu">AutoSize</span> = <span class="kw">true</span>;
+            <span class="kw">this</span>.<span class="fu">labelSaid</span>.<span class="fu">Font</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Font</span>(<span class="st">&quot;DFKai-SB&quot;</span>, <span class="fl">15.</span>75F, System.<span class="fu">Drawing</span>.<span class="fu">FontStyle</span>.<span class="fu">Regular</span>, System.<span class="fu">Drawing</span>.<span class="fu">GraphicsUnit</span>.<span class="fu">Point</span>, ((<span class="dt">byte</span>)(<span class="dv">136</span>)));
+            <span class="kw">this</span>.<span class="fu">labelSaid</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">94</span>, <span class="dv">17</span>);
+            <span class="kw">this</span>.<span class="fu">labelSaid</span>.<span class="fu">Name</span> = <span class="st">&quot;labelSaid&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">labelSaid</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">54</span>, <span class="dv">21</span>);
+            <span class="kw">this</span>.<span class="fu">labelSaid</span>.<span class="fu">TabIndex</span> = <span class="dv">4</span>;
+            <span class="kw">this</span>.<span class="fu">labelSaid</span>.<span class="fu">Text</span> = <span class="st">&quot;說：&quot;</span>;
+            <span class="co">// </span>
+            <span class="co">// textBoxUser</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">textBoxUser</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">3</span>, <span class="dv">17</span>);
+            <span class="kw">this</span>.<span class="fu">textBoxUser</span>.<span class="fu">Name</span> = <span class="st">&quot;textBoxUser&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">textBoxUser</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">88</span>, <span class="dv">22</span>);
+            <span class="kw">this</span>.<span class="fu">textBoxUser</span>.<span class="fu">TabIndex</span> = <span class="dv">3</span>;
+            <span class="co">// </span>
+            <span class="co">// textBoxMsg</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">textBoxMsg</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">154</span>, <span class="dv">17</span>);
+            <span class="kw">this</span>.<span class="fu">textBoxMsg</span>.<span class="fu">Name</span> = <span class="st">&quot;textBoxMsg&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">textBoxMsg</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">250</span>, <span class="dv">22</span>);
+            <span class="kw">this</span>.<span class="fu">textBoxMsg</span>.<span class="fu">TabIndex</span> = <span class="dv">2</span>;
+            <span class="kw">this</span>.<span class="fu">textBoxMsg</span>.<span class="fu">KeyPress</span> += <span class="kw">new</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">KeyPressEventHandler</span>(<span class="kw">this</span>.<span class="fu">textBoxMsg_KeyPress</span>);
+            <span class="co">// </span>
+            <span class="co">// buttonSend</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">buttonSend</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">410</span>, <span class="dv">14</span>);
+            <span class="kw">this</span>.<span class="fu">buttonSend</span>.<span class="fu">Name</span> = <span class="st">&quot;buttonSend&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">buttonSend</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">81</span>, <span class="dv">28</span>);
+            <span class="kw">this</span>.<span class="fu">buttonSend</span>.<span class="fu">TabIndex</span> = <span class="dv">1</span>;
+            <span class="kw">this</span>.<span class="fu">buttonSend</span>.<span class="fu">Text</span> = <span class="st">&quot;送出&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">buttonSend</span>.<span class="fu">UseVisualStyleBackColor</span> = <span class="kw">true</span>;
+            <span class="kw">this</span>.<span class="fu">buttonSend</span>.<span class="fu">Click</span> += <span class="kw">new</span> System.<span class="fu">EventHandler</span>(<span class="kw">this</span>.<span class="fu">buttonSend_Click</span>);
+            <span class="co">// </span>
+            <span class="co">// panelPadding1</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">panelPadding1</span>.<span class="fu">Dock</span> = System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">DockStyle</span>.<span class="fu">Bottom</span>;
+            <span class="kw">this</span>.<span class="fu">panelPadding1</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">0</span>, <span class="dv">48</span>);
+            <span class="kw">this</span>.<span class="fu">panelPadding1</span>.<span class="fu">Name</span> = <span class="st">&quot;panelPadding1&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">panelPadding1</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">494</span>, <span class="dv">16</span>);
+            <span class="kw">this</span>.<span class="fu">panelPadding1</span>.<span class="fu">TabIndex</span> = <span class="dv">0</span>;
+            <span class="co">// </span>
+            <span class="co">// panelMsg</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">richTextBoxBoard</span>);
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">Dock</span> = System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">DockStyle</span>.<span class="fu">Fill</span>;
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">0</span>, <span class="dv">0</span>);
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">Name</span> = <span class="st">&quot;panelMsg&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">494</span>, <span class="dv">283</span>);
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">TabIndex</span> = <span class="dv">1</span>;
+            <span class="co">// </span>
+            <span class="co">// richTextBoxBoard</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">richTextBoxBoard</span>.<span class="fu">Dock</span> = System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">DockStyle</span>.<span class="fu">Fill</span>;
+            <span class="kw">this</span>.<span class="fu">richTextBoxBoard</span>.<span class="fu">Location</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Point</span>(<span class="dv">0</span>, <span class="dv">0</span>);
+            <span class="kw">this</span>.<span class="fu">richTextBoxBoard</span>.<span class="fu">Name</span> = <span class="st">&quot;richTextBoxBoard&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">richTextBoxBoard</span>.<span class="fu">Size</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">494</span>, <span class="dv">283</span>);
+            <span class="kw">this</span>.<span class="fu">richTextBoxBoard</span>.<span class="fu">TabIndex</span> = <span class="dv">0</span>;
+            <span class="kw">this</span>.<span class="fu">richTextBoxBoard</span>.<span class="fu">Text</span> = <span class="st">&quot;&quot;</span>;
+            <span class="co">// </span>
+            <span class="co">// FormChatClient</span>
+            <span class="co">// </span>
+            <span class="kw">this</span>.<span class="fu">AutoScaleDimensions</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">SizeF</span>(6F, 12F);
+            <span class="kw">this</span>.<span class="fu">AutoScaleMode</span> = System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">AutoScaleMode</span>.<span class="fu">Font</span>;
+            <span class="kw">this</span>.<span class="fu">ClientSize</span> = <span class="kw">new</span> System.<span class="fu">Drawing</span>.<span class="fu">Size</span>(<span class="dv">494</span>, <span class="dv">347</span>);
+            <span class="kw">this</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">panelMsg</span>);
+            <span class="kw">this</span>.<span class="fu">Controls</span>.<span class="fu">Add</span>(<span class="kw">this</span>.<span class="fu">panelInput</span>);
+            <span class="kw">this</span>.<span class="fu">Name</span> = <span class="st">&quot;FormChatClient&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">Text</span> = <span class="st">&quot;C# 聊天室&quot;</span>;
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">ResumeLayout</span>(<span class="kw">false</span>);
+            <span class="kw">this</span>.<span class="fu">panelInput</span>.<span class="fu">PerformLayout</span>();
+            <span class="kw">this</span>.<span class="fu">panelMsg</span>.<span class="fu">ResumeLayout</span>(<span class="kw">false</span>);
+            <span class="kw">this</span>.<span class="fu">ResumeLayout</span>(<span class="kw">false</span>);
+
+        }
+
+        <span class="dv">#endregion</span>
+
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Panel</span> panelInput;
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Panel</span> panelMsg;
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">TextBox</span> textBoxMsg;
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Button</span> buttonSend;
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Panel</span> panelPadding1;
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">RichTextBox</span> richTextBoxBoard;
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">Label</span> labelSaid;
+        <span class="kw">private</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>.<span class="fu">TextBox</span> textBoxUser;
+    }
+}</code></pre>
+<p>檔案：Program.cs (主程式)</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+<span class="kw">using</span> System.<span class="fu">Windows</span>.<span class="fu">Forms</span>;
+
+<span class="kw">namespace</span> ChattingRoom
+{
+    <span class="kw">static</span> <span class="kw">class</span> Program
+    {
+        <span class="co">/// </span><span class="kw">&lt;summary&gt;</span>
+        <span class="co">/// 應用程式的主要進入點。</span>
+        <span class="co">/// </span><span class="kw">&lt;/summary&gt;</span>
+        [STAThread]
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>()
+        {
+            Application.<span class="fu">EnableVisualStyles</span>();
+            Application.<span class="fu">SetCompatibleTextRenderingDefault</span>(<span class="kw">false</span>);
+            Application.<span class="fu">Run</span>(<span class="kw">new</span> <span class="fu">FormChatClient</span>());
+            Application.<span class="fu">Exit</span>();
+        }
+    }
+}</code></pre>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>

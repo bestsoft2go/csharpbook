@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../css/book.css" type="text/css" />
+</head>
+<body>
+<div id="header_wrap">
+  <h1><a href="course.html">電子書：C# 程式設計</a></h1>
+  <table id="bar" border="0" style="border:0;"><tr style="border:0;">
+    <td style="text-align:left;border:0;"><a href="book.html">電子書</a> | <a href="course.html">課程區</a> | <a href="forum.html">討論區</a> | <a href="exam.html">測驗區</a></td>
+    <td style="text-align:right;border:0;"><a href="http://ccckmit.wikidot.com/">陳鍾誠</a> 於 <a href="http://www.nqu.edu.tw/">金門大學</a></td>
+  </tr></table>
+</div>
+<div id="content">
+<div id="TOC">
+<ul>
+<li><a href="#c-程式基礎資料結構">C# 程式基礎：資料結構</a><ul>
+<li><a href="#容器函式庫">容器函式庫</a></li>
+<li><a href="#容器的使用">容器的使用</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="c-程式基礎資料結構"><a href="#c-程式基礎資料結構">C# 程式基礎：資料結構</a></h1>
+<h2 id="容器函式庫"><a href="#容器函式庫">容器函式庫</a></h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">一般型別</th>
+<th align="left">泛型型別</th>
+<th align="left">說明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">ArrayList</td>
+<td align="left"><code>List&lt; &gt;</code></td>
+<td align="left">串列，以陣列實作的串列結構</td>
+</tr>
+<tr class="even">
+<td align="left">Queue</td>
+<td align="left"><code>Queue&lt; &gt;</code></td>
+<td align="left">佇列，先進先出的結構</td>
+</tr>
+<tr class="odd">
+<td align="left">Stack</td>
+<td align="left"><code>Stack&lt; &gt;</code></td>
+<td align="left">堆疊，後進先出的結構</td>
+</tr>
+<tr class="even">
+<td align="left">Hashtable</td>
+<td align="left"><code>Dictionary&lt; &gt;</code></td>
+<td align="left">雜湊表格，快速用 key 查找 value</td>
+</tr>
+<tr class="odd">
+<td align="left">StoredList</td>
+<td align="left"><code>StoredList&lt; &gt;</code></td>
+<td align="left">排序串列，使用排序與二分搜尋法的結構</td>
+</tr>
+<tr class="even">
+<td align="left">ListDictionary</td>
+<td align="left"><code>Dictionary&lt; &gt;</code></td>
+<td align="left">字典，快速用 key 查找 value</td>
+</tr>
+<tr class="odd">
+<td align="left">HybridDictionary</td>
+<td align="left"><code>Dictionary&lt; &gt;</code></td>
+<td align="left">小集合採用 ListDictionary，集合變大時，會自動改用 Hashtable 的一種字典</td>
+</tr>
+<tr class="even">
+<td align="left">OrderedDictionary</td>
+<td align="left"><code>Dictionary&lt; &gt;</code></td>
+<td align="left">比SortedList類別多了一些功能的類別</td>
+</tr>
+<tr class="odd">
+<td align="left">SortedDictionary</td>
+<td align="left"><code>StoredDictionary&lt; &gt;</code></td>
+<td align="left">鍵值一定是字串，用法跟 Hashtable 相似</td>
+</tr>
+<tr class="even">
+<td align="left">NameValueCollection</td>
+<td align="left"><code>Dictionary&lt; &gt;</code></td>
+<td align="left">NameValueCollection可以單一索引鍵對應多重值</td>
+</tr>
+<tr class="odd">
+<td align="left">DictionaryEntry</td>
+<td align="left"><code>KeyValPair&lt; &gt;</code></td>
+<td align="left">字典中的一個項目，(Key, Value) 的結構</td>
+</tr>
+<tr class="even">
+<td align="left">StringCollection</td>
+<td align="left"><code>List&lt;String&gt;</code></td>
+<td align="left">用法跟ArrayList相似</td>
+</tr>
+<tr class="odd">
+<td align="left">StringDictionary</td>
+<td align="left"><code>Dictionary&lt;String&gt;</code></td>
+<td align="left">字串字典</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>上層結構：Collection</li>
+<li>容器物件：Array, ArrayList, HashTable, SortedList</li>
+<li>位元容器：BitArray, BitVector32,</li>
+<li>泛型容器：NameValueCollection, Dictionary</li>
+</ul>
+<h2 id="容器的使用"><a href="#容器的使用">容器的使用</a></h2>
+<p>範例：</p>
+<pre class="sourceCode CS"><code class="sourceCode cs"><span class="kw">using</span> System;
+<span class="kw">using</span> System.<span class="fu">Collections</span>;
+<span class="kw">using</span> System.<span class="fu">Collections</span>.<span class="fu">Generic</span>;
+
+<span class="kw">namespace</span> ConsoleApplication1
+{
+    <span class="kw">class</span> Program
+    {
+        <span class="kw">static</span> <span class="dt">void</span> <span class="fu">Main</span>(<span class="dt">string</span>[] args)
+        {
+            ArrayList a = <span class="kw">new</span> <span class="fu">ArrayList</span>();
+            a.<span class="fu">Add</span>(<span class="st">&quot;John&quot;</span>);
+            a.<span class="fu">Add</span>(<span class="dv">1</span>);
+            a.<span class="fu">Add</span>(<span class="fl">3.1416</span>);
+            a.<span class="fu">RemoveAt</span>(<span class="dv">2</span>);
+
+            Object[] array = a.<span class="fu">ToArray</span>();
+            Console.<span class="fu">WriteLine</span>(array);
+
+            List&lt;Object&gt; list = <span class="kw">new</span> List&lt;Object&gt;();
+            list.<span class="fu">Add</span>(<span class="st">&quot;John&quot;</span>);
+            list.<span class="fu">Add</span>(<span class="st">&quot;Mary&quot;</span>);
+            list.<span class="fu">Add</span>(<span class="st">&quot;George&quot;</span>);
+            list.<span class="fu">Add</span>(<span class="st">&quot;3.14159&quot;</span>);
+            list.<span class="fu">Add</span>(<span class="fl">3.14159</span>);
+
+            <span class="kw">foreach</span> (Object o <span class="kw">in</span> list)
+                Console.<span class="fu">Write</span>(o+<span class="st">&quot; &quot;</span>);
+            Console.<span class="fu">WriteLine</span>();
+            <span class="dt">char</span> c = &#39;A&#39;;
+<span class="co">//            Console.Write(&quot;{0:X}&quot;, (int) c);</span>
+
+            Hashtable h = <span class="kw">new</span> <span class="fu">Hashtable</span>();
+            h.<span class="fu">Add</span>(<span class="st">&quot;John&quot;</span>, <span class="st">&quot;0977332415&quot;</span>);
+            h.<span class="fu">Add</span>(<span class="st">&quot;Mary&quot;</span>, <span class="st">&quot;0977342415&quot;</span>);
+            h.<span class="fu">Add</span>(<span class="st">&quot;George&quot;</span>, <span class="st">&quot;0977372416&quot;</span>);
+            h.<span class="fu">Add</span>(<span class="st">&quot;Peter&quot;</span>, <span class="st">&quot;0977332425&quot;</span>);
+            String gtel = (String) h[<span class="st">&quot;George&quot;</span>];
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;George Tel : &quot;</span>+gtel);
+
+            Dictionary&lt;String, String&gt; d = <span class="kw">new</span> Dictionary&lt;<span class="dt">string</span>, <span class="dt">string</span>&gt;();
+            d.<span class="fu">Add</span>(<span class="st">&quot;John&quot;</span>, <span class="st">&quot;0977332415&quot;</span>);
+            d.<span class="fu">Add</span>(<span class="st">&quot;Mary&quot;</span>, <span class="st">&quot;0977342415&quot;</span>);
+            d.<span class="fu">Add</span>(<span class="st">&quot;George&quot;</span>, <span class="st">&quot;0977372416&quot;</span>);
+            d.<span class="fu">Add</span>(<span class="st">&quot;Peter&quot;</span>, <span class="st">&quot;0977332425&quot;</span>);
+            gtel = d[<span class="st">&quot;George&quot;</span>];
+            Console.<span class="fu">WriteLine</span>(<span class="st">&quot;George Tel : &quot;</span> + gtel);
+
+        }
+
+    }
+}</code></pre>
+</div>
+<div id="footer">
+<a href="http://ccckmit.wikidot.com">陳鍾誠</a>衍生自<a href="http://zh.wikipedia.org/">維基百科</a>之作品：採用 <a href="http://creativecommons.org/licenses/by-sa/3.0/tw/ ">創作共用：姓名標示、相同方式分享</a> <a href="license.html">授權</a>
+</div>
+</body>
+</html>
