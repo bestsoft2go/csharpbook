@@ -8,11 +8,11 @@ ArrayList               `List< >`                     串列，以陣列實作�
 Queue                   `Queue< >`                    佇列，先進先出的結構
 Stack                   `Stack< >`                    堆疊，後進先出的結構
 Hashtable               `Dictionary< >`               雜湊表格，快速用 key 查找 value
-StoredList              `StoredList< >`               排序串列，使用排序與二分搜尋法的結構
+SortedList              `SortedList< >`               排序串列，使用排序與二分搜尋法的結構
 ListDictionary          `Dictionary< >`               字典，快速用 key 查找 value
 HybridDictionary        `Dictionary< >`               小集合採用 ListDictionary，集合變大時，會自動改用 Hashtable 的一種字典
 OrderedDictionary       `Dictionary< >`               比SortedList類別多了一些功能的類別
-SortedDictionary        `StoredDictionary< >`         鍵值一定是字串，用法跟 Hashtable 相似
+SortedDictionary        `SortedDictionary< >`         鍵值一定是字串，用法跟 Hashtable 相似
 NameValueCollection     `Dictionary< >`               NameValueCollection可以單一索引鍵對應多重值
 DictionaryEntry         `KeyValPair< >`               字典中的一個項目，(Key, Value) 的結構
 StringCollection        `List<String>`                用法跟ArrayList相似
